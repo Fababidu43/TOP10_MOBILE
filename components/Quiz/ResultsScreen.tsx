@@ -13,6 +13,7 @@ import { Trophy, Share2, RotateCcw, Chrome as Home, CircleCheck as CheckCircle, 
 import { QUIZ_CATEGORIES } from '@/utils/constants';
 import { generateShareMessage } from '@/utils/helpers';
 import { useQuiz } from '@/contexts/QuizContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function ResultsScreen() {
   const { resetQuiz } = useQuiz();
