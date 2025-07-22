@@ -12,10 +12,10 @@ export const QUIZ_CATEGORIES: QuizCategory[] = [
       'Avatar',
       'Titanic',
       'The Lord of the Rings: The Return of the King',
-      'Pirates of the Caribbean: Dead Man\'s Chest',
+      'pirates des caraïbes le secret du coffre maudits',
       'The Dark Knight',
       'Harry Potter and the Philosopher\'s Stone',
-      'Pirates of the Caribbean: The Curse of the Black Pearl',
+      'pirates des caraïbes : la malédiction du black pearl',
       'Star Wars: Episode III – Revenge of the Sith',
       'The Lord of the Rings: The Two Towers',
       'Shrek 2'
