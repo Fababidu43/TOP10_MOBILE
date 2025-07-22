@@ -10,7 +10,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, Clock, Trophy, CheckCircle, XCircle, Share2 } from 'lucide-react-native';
+import { ArrowLeft, Clock, Trophy, CircleCheck as CheckCircle, Circle as XCircle, Share2 } from 'lucide-react-native';
 import { useQuiz } from '@/contexts/QuizContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { QUIZ_CATEGORIES } from '@/utils/constants';
