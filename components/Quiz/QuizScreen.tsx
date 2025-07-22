@@ -137,22 +137,19 @@ export default function QuizScreen() {
     });
   };
 
-  const handleAbandon = () => {
+  const handleSkip = () => {
     Alert.alert(
-      'Abandonner la partie',
+      'Terminer la partie',
       'Que souhaitez-vous faire ?',
       [
         {
-          text: 'Sauvegarder et reprendre plus tard',
-          onPress: () => {
-            abandonGame();
-            router.replace('/(tabs)/');
-          },
+          text: 'Voir les résultats',
+          onPress: () => endGame(),
         },
         {
-          text: 'Abandonner définitivement',
+          text: 'Reprendre plus tard',
           onPress: () => {
-            resetQuiz();
+            abandonGame();
             router.replace('/(tabs)/');
           },
         },
@@ -256,9 +253,9 @@ export default function QuizScreen() {
 
             <TouchableOpacity 
               style={styles.skipButton}
-              onPress={handleAbandon}
+              onPress={handleSkip}
             >
-              <Text style={styles.skipButtonText}>Abandonner</Text>
+              <Text style={styles.skipButtonText}>Terminer</Text>
             </TouchableOpacity>
           </View>
 

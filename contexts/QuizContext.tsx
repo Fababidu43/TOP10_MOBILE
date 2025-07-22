@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { isAnswerCorrect } from '@/utils/helpers';
 
 export interface QuizItem {
   id: string;
@@ -97,15 +96,13 @@ export function QuizProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<QuizState>(initialState);
 
   const startQuiz = (category: QuizCategory) => {
-    // Toujours réinitialiser complètement avant de commencer un nouveau quiz
-    setState(initialState);
     const questions = generateQuestions(category);
-    setState(prev => ({
-      ...prev,
+    setState({
+      ...initialState,
       currentCategory: category,
       questions: shuffle(questions),
       usedHints: {},
-    }));
+    });
   };
 
   const submitAnswer = (answer: string): { isCorrect: boolean; item?: QuizItem; points: number; explanation?: string } => {
@@ -113,8 +110,9 @@ export function QuizProvider({ children }: { children: ReactNode }) {
       return { isCorrect: false, points: 0 };
     }
 
+    const trimmedAnswer = answer.toLowerCase().trim();
     const foundItem = state.questions.find(
-      item => isAnswerCorrect(answer, item.name)
+      item => item.name.toLowerCase().trim() === trimmedAnswer
     );
 
 

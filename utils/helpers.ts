@@ -36,62 +36,7 @@ export const normalizeString = (str: string): string => {
  * Vérifie si deux chaînes correspondent (avec normalisation)
  */
 export const isAnswerCorrect = (userAnswer: string, correctAnswer: string): boolean => {
-  const normalizedUser = normalizeString(userAnswer);
-  const normalizedCorrect = normalizeString(correctAnswer);
-  
-  // Vérification exacte
-  if (normalizedUser === normalizedCorrect) {
-    return true;
-  }
-  
-  // Vérification avec tolérance aux fautes (distance de Levenshtein simple)
-  return calculateSimilarity(normalizedUser, normalizedCorrect) >= 0.8;
-};
-
-/**
- * Calcule la similarité entre deux chaînes (0 = différent, 1 = identique)
- */
-const calculateSimilarity = (str1: string, str2: string): number => {
-  const longer = str1.length > str2.length ? str1 : str2;
-  const shorter = str1.length > str2.length ? str2 : str1;
-  
-  if (longer.length === 0) {
-    return 1.0;
-  }
-  
-  const distance = levenshteinDistance(longer, shorter);
-  return (longer.length - distance) / longer.length;
-};
-
-/**
- * Calcule la distance de Levenshtein entre deux chaînes
- */
-const levenshteinDistance = (str1: string, str2: string): number => {
-  const matrix = [];
-  
-  for (let i = 0; i <= str2.length; i++) {
-    matrix[i] = [i];
-  }
-  
-  for (let j = 0; j <= str1.length; j++) {
-    matrix[0][j] = j;
-  }
-  
-  for (let i = 1; i <= str2.length; i++) {
-    for (let j = 1; j <= str1.length; j++) {
-      if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
-        matrix[i][j] = matrix[i - 1][j - 1];
-      } else {
-        matrix[i][j] = Math.min(
-          matrix[i - 1][j - 1] + 1,
-          matrix[i][j - 1] + 1,
-          matrix[i - 1][j] + 1
-        );
-      }
-    }
-  }
-  
-  return matrix[str2.length][str1.length];
+  return normalizeString(userAnswer) === normalizeString(correctAnswer);
 };
 
 /**

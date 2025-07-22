@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
-  Alert,
 } from 'react-native';
 import { router } from 'expo-router';
 import { Play, TrendingUp, Users, Target, Info } from 'lucide-react-native';
@@ -59,19 +58,8 @@ export default function HomeScreen() {
   };
 
   const handleTutorial = () => {
-    Alert.alert(
-      'Comment jouer ?',
-      'Devinez les 10 éléments d\'un classement !\n\n' +
-      '🎯 Exemple : "Les 10 films les plus vus en 2020"\n\n' +
-      '📝 Règles :\n' +
-      '• 3 tentatives par élément\n' +
-      '• 3 points pour la 1ère tentative\n' +
-      '• 2 points pour la 2ème tentative\n' +
-      '• 1 point pour la 3ème tentative\n' +
-      '• Indices disponibles pour vous aider\n\n' +
-      '🏆 Objectif : Obtenir le maximum de points en trouvant tous les éléments !',
-      [{ text: 'Compris !', style: 'default' }]
-    );
+    // TODO: Ouvrir modal tutorial
+    console.log('Ouvrir tutorial');
   };
 
   return (

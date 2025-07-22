@@ -11,13 +11,13 @@ export const QUIZ_CATEGORIES: QuizCategory[] = [
     items: [
       'Avatar',
       'Titanic',
-      'Le Seigneur des Anneaux : Le Retour du Roi',
-      'Pirates des Caraïbes : Le Secret du Coffre Maudit',
+      'The Lord of the Rings: The Return of the King',
+      'Pirates of the Caribbean: Dead Man\'s Chest',
       'The Dark Knight',
-      'Harry Potter à l\'École des Sorciers',
-      'Pirates des Caraïbes : La Malédiction du Black Pearl',
-      'Star Wars Episode III : La Revanche des Sith',
-      'Le Seigneur des Anneaux : Les Deux Tours',
+      'Harry Potter and the Philosopher\'s Stone',
+      'Pirates of the Caribbean: The Curse of the Black Pearl',
+      'Star Wars: Episode III – Revenge of the Sith',
+      'The Lord of the Rings: The Two Towers',
       'Shrek 2'
     ],
     explanations: [
@@ -53,14 +53,14 @@ export const QUIZ_CATEGORIES: QuizCategory[] = [
     color: '#DC2626',
     items: [
       'Stranger Things',
-      'Mercredi',
-      'La Casa de Papel',
+      'Wednesday',
+      'Money Heist',
       'Bridgerton',
       'The Witcher',
       'Ozark',
-      'La Couronne',
+      'The Crown',
       'Lucifer',
-      'Toi',
+      'You',
       'Elite'
     ]
   },
