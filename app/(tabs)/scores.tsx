@@ -6,7 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import { Trophy, Medal, Star, TrendingUp, Users, Calendar } from 'lucide-react-native';
+import { Trophy, Medal, Star, TrendingUp, Users, Calendar, Target, Clock } from 'lucide-react-native';
 
 const achievements = [
   {
