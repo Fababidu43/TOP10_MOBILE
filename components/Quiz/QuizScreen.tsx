@@ -53,7 +53,8 @@ export default function QuizScreen() {
 
   useEffect(() => {
     if (quizState.gameOver) {
-      handleGameEnd();
+      // Naviguer immédiatement vers les résultats
+      router.replace(`/results?categoryId=${category?.id}&score=${quizState.score}&foundCount=${quizState.foundItems.length}&totalItems=10`);
     }
   }, [quizState.gameOver]);
 
@@ -97,14 +98,6 @@ export default function QuizScreen() {
     }
   };
 
-  const handleGameEnd = () => {
-    if (authState.isAuthenticated) {
-      updateScore(quizState.score);
-    }
-
-    // Naviguer vers l'écran de résultats
-    router.replace(`/results?categoryId=${category.id}&score=${quizState.score}&foundCount=${quizState.foundItems.length}&totalItems=10`);
-  };
 
   const handleShare = () => {
     if (!category) return;
@@ -138,27 +131,8 @@ export default function QuizScreen() {
   };
 
   const handleSkip = () => {
-    Alert.alert(
-      'Terminer la partie',
-      'Que souhaitez-vous faire ?',
-      [
-        {
-          text: 'Voir les résultats',
-          onPress: () => endGame(),
-        },
-        {
-          text: 'Reprendre plus tard',
-          onPress: () => {
-            abandonGame();
-            router.replace('/(tabs)/');
-          },
-        },
-        {
-          text: 'Annuler',
-          style: 'cancel',
-        },
-      ]
-    );
+    // Ouvrir directement l'écran Résultats
+    endGame();
   };
 
   if (!category) {
@@ -255,7 +229,7 @@ export default function QuizScreen() {
               style={styles.skipButton}
               onPress={handleSkip}
             >
-              <Text style={styles.skipButtonText}>Terminer</Text>
+              <Text style={styles.skipButtonText}>Abandonner</Text>
             </TouchableOpacity>
           </View>
 

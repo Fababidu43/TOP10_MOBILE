@@ -65,12 +65,13 @@ export default function ResultsScreen() {
   };
 
   const handleReplay = () => {
-    // Supprimer le bouton rejouer car si on termine, on ne veut pas rejouer immédiatement
-    handleBackToPlay();
+    if (category) {
+      resetQuiz();
+      router.replace(`/quiz?category=${category.id}`);
+    }
   };
 
   const handleBackToPlay = () => {
-    // Réinitialiser le quiz avant de retourner à la sélection
     resetQuiz();
     router.replace('/(tabs)/play');
   };
@@ -188,9 +189,13 @@ export default function ResultsScreen() {
           )}
 
           <View style={styles.navigationButtons}>
+            <TouchableOpacity style={styles.replayButton} onPress={handleReplay}>
+              <RotateCcw size={20} color="#2563EB" />
+              <Text style={styles.replayButtonText}>Rejouer</Text>
+            </TouchableOpacity>
 
             <TouchableOpacity style={styles.playButton} onPress={handleBackToPlay}>
-              <Text style={styles.playButtonText}>Autre quiz</Text>
+              <Text style={styles.playButtonText}>Retour à Jouer</Text>
             </TouchableOpacity>
           </View>
 
@@ -352,7 +357,7 @@ const styles = StyleSheet.create({
     color: '#059669',
   },
   itemMissed: {
-    color: '#DC2626',
+    color: '#94A3B8',
   },
   actionsSection: {
     paddingHorizontal: 20,
