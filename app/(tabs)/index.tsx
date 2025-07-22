@@ -8,64 +8,18 @@ import {
   Dimensions,
 } from 'react-native';
 import { router } from 'expo-router';
-import { Play, TrendingUp, Film, Tv, Gamepad2, MapPin, Music, Award } from 'lucide-react-native';
+import { Play, TrendingUp } from 'lucide-react-native';
+import { QUIZ_CATEGORIES, CATEGORY_ICONS } from '@/utils/constants';
+import { useAuth } from '@/contexts/AuthContext';
 
 const { width } = Dimensions.get('window');
 
-const categories = [
-  {
-    id: 'movies-2000s',
-    title: 'Films des années 2000',
-    description: 'Les blockbusters qui ont marqué la décennie',
-    icon: Film,
-    color: '#2563EB',
-    difficulty: 'Facile',
-  },
-  {
-    id: 'netflix-series',
-    title: 'Séries Netflix',
-    description: 'Les séries les plus regardées sur Netflix',
-    icon: Tv,
-    color: '#DC2626',
-    difficulty: 'Moyen',
-  },
-  {
-    id: 'video-games',
-    title: 'Jeux vidéo populaires',
-    description: 'Les jeux les plus vendus de tous les temps',
-    icon: Gamepad2,
-    color: '#7C3AED',
-    difficulty: 'Difficile',
-  },
-  {
-    id: 'destinations',
-    title: 'Destinations de rêve',
-    description: 'Les pays les plus visités au monde',
-    icon: MapPin,
-    color: '#059669',
-    difficulty: 'Moyen',
-  },
-  {
-    id: 'music-hits',
-    title: 'Hits musicaux',
-    description: 'Les chansons les plus écoutées en 2024',
-    icon: Music,
-    color: '#F97316',
-    difficulty: 'Facile',
-  },
-  {
-    id: 'sports',
-    title: 'Champions sportifs',
-    description: 'Les plus grands athlètes de l\'histoire',
-    icon: Award,
-    color: '#DC2626',
-    difficulty: 'Difficile',
-  },
-];
 
 export default function HomeScreen() {
+  const { state: authState } = useAuth();
+
   const handleCategoryPress = (categoryId: string) => {
-    router.push(`/play?category=${categoryId}`);
+    router.push(`/quiz?category=${categoryId}`);
   };
 
   return (
@@ -98,8 +52,8 @@ export default function HomeScreen() {
         <View style={styles.categoriesSection}>
           <Text style={styles.sectionTitle}>Catégories populaires</Text>
           <View style={styles.categoriesGrid}>
-            {categories.map((category) => {
-              const IconComponent = category.icon;
+            {QUIZ_CATEGORIES.map((category) => {
+              const IconComponent = CATEGORY_ICONS[category.id as keyof typeof CATEGORY_ICONS];
               return (
                 <TouchableOpacity
                   key={category.id}
@@ -117,13 +71,30 @@ export default function HomeScreen() {
                   <Text style={styles.categoryTitle}>{category.title}</Text>
                   <Text style={styles.categoryDescription}>{category.description}</Text>
                   <View style={styles.categoryFooter}>
-                    <Text style={styles.playButton}>Jouer →</Text>
+                    <Text style={styles.playButton}>
+                      {authState.isAuthenticated ? 'Jouer →' : 'Connexion requise'}
+                    </Text>
                   </View>
                 </TouchableOpacity>
               );
             })}
           </View>
         </View>
+
+        {!authState.isAuthenticated && (
+          <View style={styles.authPrompt}>
+            <Text style={styles.authPromptTitle}>Connectez-vous pour jouer !</Text>
+            <Text style={styles.authPromptText}>
+              Créez un compte pour sauvegarder vos scores et débloquer toutes les fonctionnalités.
+            </Text>
+            <TouchableOpacity 
+              style={styles.authButton}
+              onPress={() => router.push('/login')}
+            >
+              <Text style={styles.authButtonText}>Se connecter</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -265,5 +236,45 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#2563EB',
+  },
+  authPrompt: {
+    backgroundColor: '#FFFFFF',
+    margin: 20,
+    borderRadius: 16,
+    padding: 24,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  authPromptTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  authPromptText: {
+    fontSize: 14,
+    color: '#64748B',
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 20,
+  },
+  authButton: {
+    backgroundColor: '#2563EB',
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+  },
+  authButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

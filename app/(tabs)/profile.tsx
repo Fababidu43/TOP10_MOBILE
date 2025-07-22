@@ -7,16 +7,51 @@ import {
   Switch,
   ScrollView,
 } from 'react-native';
+import { router } from 'expo-router';
 import { User, Settings, Bell, Moon, Sun, Share2, Heart, CircleHelp as HelpCircle, LogOut, CreditCard as Edit3, Crown } from 'lucide-react-native';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function ProfileScreen() {
+  const { state: authState, logout, updateProfile } = useAuth();
   const [darkMode, setDarkMode] = useState(false);
   const [notifications, setNotifications] = useState(true);
   const [soundEffects, setSoundEffects] = useState(true);
   const [hapticFeedback, setHapticFeedback] = useState(true);
 
   const avatars = ['🎯', '🎮', '🎬', '🎵', '🌟', '🚀', '🎭', '🎨'];
-  const [selectedAvatar, setSelectedAvatar] = useState('🎯');
+  const [selectedAvatar, setSelectedAvatar] = useState(authState.user?.avatar || '🎯');
+
+  const handleAvatarChange = (avatar: string) => {
+    setSelectedAvatar(avatar);
+    updateProfile({ avatar });
+  };
+
+  const handleLogout = () => {
+    logout();
+    router.replace('/');
+  };
+
+  if (!authState.isAuthenticated) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Profil</Text>
+        </View>
+        <View style={styles.notAuthenticatedContainer}>
+          <Text style={styles.notAuthenticatedTitle}>Connexion requise</Text>
+          <Text style={styles.notAuthenticatedText}>
+            Connectez-vous pour accéder à votre profil et sauvegarder vos scores.
+          </Text>
+          <TouchableOpacity 
+            style={styles.loginButton}
+            onPress={() => router.push('/login')}
+          >
+            <Text style={styles.loginButtonText}>Se connecter</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -33,11 +68,13 @@ export default function ProfileScreen() {
             <Text style={styles.avatar}>{selectedAvatar}</Text>
             <View style={styles.levelBadge}>
               <Crown size={16} color="#F59E0B" />
-              <Text style={styles.levelText}>Niveau 8</Text>
+              <Text style={styles.levelText}>Niveau {authState.user?.level}</Text>
             </View>
           </View>
-          <Text style={styles.username}>QuizMaster_Pro</Text>
-          <Text style={styles.userStats}>127 points • 8 quiz terminés</Text>
+          <Text style={styles.username}>{authState.user?.username}</Text>
+          <Text style={styles.userStats}>
+            {authState.user?.totalPoints} points • {authState.user?.quizCompleted} quiz terminés
+          </Text>
           
           <View style={styles.avatarSelector}>
             <Text style={styles.avatarSelectorTitle}>Choisir un avatar :</Text>
@@ -49,7 +86,7 @@ export default function ProfileScreen() {
                     styles.avatarOption,
                     selectedAvatar === avatarEmoji && styles.avatarSelected
                   ]}
-                  onPress={() => setSelectedAvatar(avatarEmoji)}
+                  onPress={() => handleAvatarChange(avatarEmoji)}
                 >
                   <Text style={styles.avatarEmoji}>{avatarEmoji}</Text>
                 </TouchableOpacity>
@@ -148,7 +185,7 @@ export default function ProfileScreen() {
 
         <TouchableOpacity style={styles.logoutButton}>
           <LogOut size={20} color="#DC2626" />
-          <Text style={styles.logoutText}>Se déconnecter</Text>
+          <Text style={styles.logoutText} onPress={handleLogout}>Se déconnecter</Text>
         </TouchableOpacity>
 
         <View style={styles.footer}>
@@ -363,5 +400,36 @@ const styles = StyleSheet.create({
   copyrightText: {
     fontSize: 12,
     color: '#94A3B8',
+  },
+  notAuthenticatedContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 40,
+  },
+  notAuthenticatedTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  notAuthenticatedText: {
+    fontSize: 16,
+    color: '#64748B',
+    textAlign: 'center',
+    lineHeight: 24,
+    marginBottom: 32,
+  },
+  loginButton: {
+    backgroundColor: '#2563EB',
+    borderRadius: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+  },
+  loginButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '700',
   },
 });
