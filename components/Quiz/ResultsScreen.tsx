@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Share,
+  Alert,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Trophy, Share2, RotateCcw, Chrome as Home, CircleCheck as CheckCircle, Circle as XCircle } from 'lucide-react-native';
@@ -43,7 +44,11 @@ export default function ResultsScreen() {
         title: 'Mon score Top 10 Quiz',
       });
     } catch (error) {
-      console.error('Erreur lors du partage:', error);
+      Alert.alert(
+        'Partage impossible',
+        'Le partage n\'est pas disponible sur cette plateforme. Vous pouvez copier votre score manuellement.',
+        [{ text: 'OK' }]
+      );
     }
   };
 
