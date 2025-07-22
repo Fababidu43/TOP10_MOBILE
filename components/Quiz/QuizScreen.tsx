@@ -490,13 +490,15 @@ const styles = StyleSheet.create({
   },
   skipButton: {
     flex: 1,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#FEF2F2',
     borderRadius: 12,
     paddingVertical: 12,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#FECACA',
   },
   skipButtonText: {
-    color: '#64748B',
+    color: '#DC2626',
     fontSize: 14,
     fontWeight: '600',
   },

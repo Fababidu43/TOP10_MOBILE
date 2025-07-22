@@ -96,9 +96,12 @@ export function QuizProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<QuizState>(initialState);
 
   const startQuiz = (category: QuizCategory) => {
+    // Toujours réinitialiser l'état avant de commencer un nouveau quiz
+    setState(initialState);
+    
     const questions = generateQuestions(category);
     setState({
-      ...initialState,
+      ...initialState, 
       currentCategory: category,
       questions: shuffle(questions),
       usedHints: {},
@@ -110,9 +113,8 @@ export function QuizProvider({ children }: { children: ReactNode }) {
       return { isCorrect: false, points: 0 };
     }
 
-    const trimmedAnswer = answer.toLowerCase().trim();
     const foundItem = state.questions.find(
-      item => item.name.toLowerCase().trim() === trimmedAnswer
+      item => isAnswerCorrectWithTolerance(answer, item.name)
     );
 
 

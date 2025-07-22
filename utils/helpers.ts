@@ -121,3 +121,53 @@ export const debounce = <T extends (...args: any[]) => any>(
     timeout = setTimeout(() => func(...args), wait);
   };
 };
+
+/**
+ * Calcule la distance de Levenshtein entre deux chaînes
+ */
+export const levenshteinDistance = (str1: string, str2: string): number => {
+  const matrix = [];
+  
+  // Créer la matrice
+  for (let i = 0; i <= str2.length; i++) {
+    matrix[i] = [i];
+  }
+  
+  for (let j = 0; j <= str1.length; j++) {
+    matrix[0][j] = j;
+  }
+  
+  // Remplir la matrice
+  for (let i = 1; i <= str2.length; i++) {
+    for (let j = 1; j <= str1.length; j++) {
+      if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1, // substitution
+          matrix[i][j - 1] + 1,     // insertion
+          matrix[i - 1][j] + 1      // suppression
+        );
+      }
+    }
+  }
+  
+  return matrix[str2.length][str1.length];
+};
+
+/**
+ * Vérifie si deux chaînes correspondent avec tolérance aux fautes
+ */
+export const isAnswerCorrectWithTolerance = (userAnswer: string, correctAnswer: string): boolean => {
+  const normalizedUser = normalizeString(userAnswer);
+  const normalizedCorrect = normalizeString(correctAnswer);
+  
+  // Correspondance exacte
+  if (normalizedUser === normalizedCorrect) {
+    return true;
+  }
+  
+  // Tolérance aux fautes (distance de Levenshtein <= 1)
+  const distance = levenshteinDistance(normalizedUser, normalizedCorrect);
+  return distance <= 1;
+};
