@@ -4,8 +4,8 @@ import { Film, Tv, Gamepad2, MapPin, Music, Award } from 'lucide-react-native';
 export const QUIZ_CATEGORIES: QuizCategory[] = [
   {
     id: 'movies-2000s',
-    title: 'Films français populaires',
-    description: 'Les films français les plus populaires',
+    title: 'Films francais populaires',
+    description: 'Les films francais les plus populaires',
     difficulty: 'Facile',
     color: '#DC2626',
     items: [
@@ -22,26 +22,26 @@ export const QUIZ_CATEGORIES: QuizCategory[] = [
     ],
     explanations: [
       'Le Fabuleux Destin d\'Amelie Poulain de Jean-Pierre Jeunet a conquis le monde entier avec sa poesie visuelle.',
-      'Titanic reste l\'un des films les plus emblématiques de tous les temps, combinant romance épique et reconstitution historique.',
+      'Intouchables reste l\'un des films francais les plus vus avec son duo Omar Sy et Francois Cluzet.',
       'Bienvenue chez les Ch\'tis a battu tous les records du box-office francais.',
-      'Pirates des Caraïbes 2 a capitalisé sur le succès du premier film avec des effets spéciaux spectaculaires.',
+      'Les Visiteurs avec Jean Reno et Christian Clavier reste un classique de la comedie francaise.',
       'Asterix et Obelix Mission Cleopatre reste la meilleure adaptation des BD d\'Uderzo.',
       'Le Diner de Cons de Francis Veber est un chef-d\'oeuvre du theatre adapte au cinema.',
       'La Grande Vadrouille avec Bourvil et de Funes reste un classique intemporel.',
       'Les Bronzes ont cree un nouveau genre de comedie a la francaise.',
-      'Les Deux Tours a maintenu la qualité de la trilogie avec la bataille du Gouffre de Helm.',
+      'Taxi avec Samy Naceri a lance une saga culte du cinema francais.',
       'Le Pere Noel est une Ordure du Splendid reste culte avec ses repliques memorables.'
     ],
     hints: [
       ['Film de Jean-Pierre Jeunet', 'Montmartre', 'Audrey Tautou'],
-      ['Naufrage célèbre', 'Leonardo DiCaprio', 'Rose et Jack'],
+      ['Omar Sy', 'Handicap', 'Amitie'],
       ['Nord de la France', 'Dany Boon', 'Accent ch\'ti'],
       ['Moyen Age', 'Jean Reno', 'Voyage dans le temps'],
       ['Asterix', 'Jamel Debbouze', 'Egypte antique'],
-      ['École de magie', 'Garçon à lunettes', 'J.K. Rowling'],
+      ['Francis Veber', 'Idiot', 'Diner'],
       ['Bourvil', 'Louis de Funes', 'Seconde Guerre mondiale'],
-      ['Prélogie Star Wars', 'Anakin devient Vador', 'Vengeance des Sith'],
-      ['Deuxième film LOTR', 'Bataille du Gouffre de Helm', 'Gollum'],
+      ['Vacances', 'Plage', 'Bronzage'],
+      ['Voiture', 'Marseille', 'Course poursuite'],
       ['Splendid', 'Noel', 'SDF']
     ]
   },
@@ -69,7 +69,7 @@ export const QUIZ_CATEGORIES: QuizCategory[] = [
       'La Casa de Papel est devenue un phenomene mondial avec ses braquages spectaculaires.',
       'Bridgerton a modernise le genre periode avec sa diversite et ses romances passionnees.',
       'The Witcher a adapte avec succes l\'univers fantasy d\'Andrzej Sapkowski.',
-      'Ozark a captivé avec son thriller familial sombre dans les Ozarks.',
+      'Ozark a captive avec son thriller familial sombre dans les Ozarks.',
       'The Crown offre un regard intime sur la famille royale britannique.',
       'Lucifer a melange comedie, romance et procedural avec charme.',
       'You explore les derives des reseaux sociaux et de l\'obsession amoureuse.',
@@ -83,7 +83,7 @@ export const QUIZ_CATEGORIES: QuizCategory[] = [
       ['Geralt de Riv', 'Sorceleur', 'Yennefer'],
       ['Blanchiment d\'argent', 'Famille Byrde', 'Missouri'],
       ['Famille royale', 'Elizabeth II', 'Buckingham'],
-      ['Diable', 'LAPD', 'Boîte de nuit'],
+      ['Diable', 'LAPD', 'Boite de nuit'],
       ['Stalker', 'Librairie', 'Reseaux sociaux'],
       ['Lycee prive', 'Las Encinas', 'Secrets']
     ]
@@ -108,13 +108,13 @@ export const QUIZ_CATEGORIES: QuizCategory[] = [
     ],
     explanations: [
       'Minecraft a revolutionne le gaming avec son monde ouvert en blocs et sa creativite infinie.',
-      'GTA V continue de dominer les ventes grâce à son monde ouvert et GTA Online.',
+      'GTA V continue de dominer les ventes grace a son monde ouvert et GTA Online.',
       'Tetris reste le puzzle game le plus addictif et intemporel de tous les temps.',
       'Wii Sports a democratise le gaming motion avec la Nintendo Wii.',
       'PUBG a popularise le genre Battle Royale avant Fortnite.',
       'Super Mario Bros a sauve l\'industrie du jeu video dans les annees 80.',
       'Mario Kart 8 perfectionne la formule de course arcade de Nintendo.',
-      'Red Dead Redemption 2 offre l\'expérience western la plus immersive.',
+      'Red Dead Redemption 2 offre l\'experience western la plus immersive.',
       'The Witcher 3 definit le standard des RPG modernes avec ses quetes.',
       'Call of Duty Modern Warfare a revolutionne les FPS militaires.'
     ],
@@ -127,7 +127,7 @@ export const QUIZ_CATEGORIES: QuizCategory[] = [
       ['Plombier', 'Champignons', 'Princesse'],
       ['Course', 'Kart', 'Objets'],
       ['Western', 'Arthur Morgan', 'Cow-boys'],
-      ['Geralt', 'RPG', 'Quêtes'],
+      ['Geralt', 'RPG', 'Quetes'],
       ['FPS', 'Militaire', 'Multijoueur']
     ]
   },
@@ -170,7 +170,7 @@ export const QUIZ_CATEGORIES: QuizCategory[] = [
       ['Istanbul', 'Cappadoce', 'Bosphore'],
       ['Cancun', 'Tequila', 'Mayas'],
       ['Bangkok', 'Temples', 'Pad Thai'],
-      ['Berlin', 'Oktoberfest', 'Châteaux'],
+      ['Berlin', 'Oktoberfest', 'Chateaux'],
       ['Londres', 'Big Ben', 'The']
     ]
   },
@@ -181,14 +181,14 @@ export const QUIZ_CATEGORIES: QuizCategory[] = [
     difficulty: 'Facile',
     color: '#EA580C',
     items: [
-      'Dernière Danse - Indila',
+      'Derniere Danse - Indila',
       'Alors on Danse - Stromae',
       'Je Veux - Zaz',
       'Papaoutai - Stromae',
       'Formidable - Stromae',
-      'Tous les Mêmes - Stromae',
-      'La Vie en Rose - Édith Piaf',
-      'Non, je ne Regrette Rien - Édith Piaf',
+      'Tous les Memes - Stromae',
+      'La Vie en Rose - Edith Piaf',
+      'Non je ne Regrette Rien - Edith Piaf',
       'Comme d\'Habitude - Claude Francois',
       'Alexandrie Alexandra - Claude Francois'
     ],
@@ -198,20 +198,20 @@ export const QUIZ_CATEGORIES: QuizCategory[] = [
       'Je Veux de Zaz a conquis le monde avec sa fraicheur et son authenticite.',
       'Papaoutai de Stromae aborde avec genie la figure paternelle absente.',
       'Formidable de Stromae raconte une rupture amoureuse avec une melodie inoubliable.',
-      'Tous les Mêmes de Stromae critique avec humour les relations hommes-femmes.',
+      'Tous les Memes de Stromae critique avec humour les relations hommes-femmes.',
       'La Vie en Rose d\'Edith Piaf reste l\'une des chansons francaises les plus connues au monde.',
-      'Non, je ne Regrette Rien d\'Edith Piaf est devenue un hymne a la resilience.',
-      'Comme d\'Habitude de Claude Francois a inspire "My Way" de Frank Sinatra.',
+      'Non je ne Regrette Rien d\'Edith Piaf est devenue un hymne a la resilience.',
+      'Comme d\'Habitude de Claude Francois a inspire My Way de Frank Sinatra.',
       'Alexandrie Alexandra de Claude Francois reste un classique de la chanson francaise.'
     ],
     hints: [
       ['Indila', 'Danse', 'Melancolie'],
-      ['Stromae', 'Danse', 'Électro'],
+      ['Stromae', 'Danse', 'Electro'],
       ['Zaz', 'Authenticite', 'Accordeon'],
       ['Stromae', 'Papa', 'Pere absent'],
       ['Stromae', 'Rupture', 'Alcool'],
       ['Stromae', 'Hommes femmes', 'Critique'],
-      ['Édith Piaf', 'Rose', 'Amour'],
+      ['Edith Piaf', 'Rose', 'Amour'],
       ['Edith Piaf', 'Regrets', 'Resilience'],
       ['Claude Francois', 'Habitude', 'My Way'],
       ['Claude Francois', 'Alexandrie', 'Egypte']
@@ -238,17 +238,17 @@ export const QUIZ_CATEGORIES: QuizCategory[] = [
     explanations: [
       'Zinedine Zidane est considere comme l\'un des plus grands footballeurs de tous les temps.',
       'Michel Platini a domine le football europeen dans les annees 80.',
-      'Thierry Henry reste le meilleur buteur de l\'histoire de l\'équipe de France.',
+      'Thierry Henry reste le meilleur buteur de l\'histoire de l\'equipe de France.',
       'Yannick Noah a remporte Roland-Garros et mene la France vers la Coupe Davis.',
       'Sebastien Loeb a revolutionne le rallye avec ses 9 titres mondiaux consecutifs.',
       'Teddy Riner domine le judo mondial depuis plus de 15 ans.',
       'Marie-Jose Perec a marque l\'athletisme francais avec ses titres olympiques.',
       'Laure Manaudou a ete la reine de la natation francaise.',
-      'Tony Parker a brillé en NBA et avec l\'équipe de France.',
+      'Tony Parker a brille en NBA et avec l\'equipe de France.',
       'Alain Prost reste une legende de la Formule 1 avec ses 4 titres mondiaux.'
     ],
     hints: [
-      ['Football', 'Real Madrid', 'Coup de tête 2006'],
+      ['Football', 'Real Madrid', 'Coup de tete 2006'],
       ['Football', 'Annees 80', 'Ballon d\'Or'],
       ['Football', 'Arsenal', 'Buteur historique'],
       ['Tennis', 'Roland-Garros', 'Coupe Davis'],
@@ -273,7 +273,7 @@ export const CATEGORY_ICONS = {
 
 export const TIMER_DURATION = 300; // 5 minutes en secondes
 export const MAX_ATTEMPTS_PER_ITEM = 3;
-export const POINTS_PER_CORRECT_ANSWER = [3, 2, 1]; // Points dégressifs
+export const POINTS_PER_CORRECT_ANSWER = [3, 2, 1]; // Points degressifs
 
 export const ACHIEVEMENT_TYPES = {
   PERFECT_SCORE: 'perfect-score',

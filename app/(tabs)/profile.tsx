@@ -60,12 +60,16 @@ export default function ProfileScreen() {
 
   const handleShareApp = async () => {
     try {
-      const message = "🎯 Découvrez Top 10 Quiz ! Devinez les 10 éléments les plus populaires dans différentes catégories. Téléchargez maintenant !";
+      const message = "🎯 Decouvrez Top 10 Quiz ! Devinez les 10 elements les plus populaires dans differentes categories. Telechargez maintenant !";
       
       if (Platform.OS === 'web') {
         // Pour le web, copier dans le presse-papiers
-        await navigator.clipboard.writeText(message);
-        Alert.alert('Succès', 'Le lien a été copié dans votre presse-papiers !');
+        if (navigator.clipboard) {
+          await navigator.clipboard.writeText(message);
+          Alert.alert('Succes', 'Le lien a ete copie dans votre presse-papiers !');
+        } else {
+          Alert.alert('Info', 'Copiez ce message : ' + message);
+        }
       } else {
         // Pour mobile, utiliser l'API de partage native
         const { Share } = require('react-native');
@@ -82,7 +86,7 @@ export default function ProfileScreen() {
   const handleRateApp = () => {
     Alert.alert(
       'Noter l\'application',
-      'Merci de nous soutenir ! Votre avis nous aide à améliorer l\'application.',
+      'Merci de nous soutenir ! Votre avis nous aide a ameliorer l\'application.',
       [
         { text: 'Plus tard', style: 'cancel' },
         { 
@@ -99,7 +103,7 @@ export default function ProfileScreen() {
   const handleHelp = () => {
     Alert.alert(
       'Aide & FAQ',
-      '🎯 Comment jouer ?\nDevinez les 10 éléments d\'un classement !\n\n❓ Règles :\n• 3 tentatives par élément\n• 3 points par bonne réponse\n• Indices disponibles\n\n📧 Support :\nsupport@top10quiz.com',
+      '🎯 Comment jouer ?\nDevinez les 10 elements d\'un classement !\n\n❓ Regles :\n• 3 tentatives par element\n• 3 points par bonne reponse\n• Indices disponibles\n\n📧 Support :\nsupport@top10quiz.com',
       [{ text: 'Compris' }]
     );
   };
@@ -107,7 +111,7 @@ export default function ProfileScreen() {
   const handleTerms = () => {
     Alert.alert(
       'Conditions d\'utilisation',
-      '📋 Conditions générales :\n\n• Application gratuite\n• Données personnelles protégées\n• Contenu à des fins de divertissement\n• Mise à jour régulière du contenu\n\n📞 Contact :\nlegal@top10quiz.com',
+      '📋 Conditions generales :\n\n• Application gratuite\n• Donnees personnelles protegees\n• Contenu a des fins de divertissement\n• Mise a jour reguliere du contenu\n\n📞 Contact :\nlegal@top10quiz.com',
       [{ text: 'J\'accepte' }]
     );
   };
