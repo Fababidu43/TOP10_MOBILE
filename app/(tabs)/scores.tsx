@@ -162,6 +162,16 @@ export default function ScoresScreen() {
                     <Text style={styles.scoreRankText}>#{scoreItem.rank}</Text>
                   </View>
                 </View>
+                <View style={styles.scoreStats}>
+                  <View style={styles.scoreStatItem}>
+                    <Target size={14} color="#64748B" />
+                    <Text style={styles.scoreStatText}>{scoreItem.foundItems}/{scoreItem.totalItems} trouvés</Text>
+                  </View>
+                  <View style={styles.scoreStatItem}>
+                    <Clock size={14} color="#64748B" />
+                    <Text style={styles.scoreStatText}>{scoreItem.attempts} tentatives</Text>
+                  </View>
+                </View>
                 <View style={styles.scoreProgress}>
                   <View 
                     style={[
@@ -406,5 +416,39 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '700',
+  },
+  scoreStats: {
+    flexDirection: 'row',
+    gap: 16,
+    marginBottom: 12,
+  },
+  scoreStatItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  scoreStatText: {
+    fontSize: 12,
+    color: '#64748B',
+    fontWeight: '500',
+  },
+  notAuthenticatedContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 40,
+  },
+  notAuthenticatedTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  notAuthenticatedText: {
+    fontSize: 16,
+    color: '#64748B',
+    textAlign: 'center',
+    lineHeight: 24,
   },
 });

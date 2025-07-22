@@ -11,7 +11,7 @@ import {
   Animated,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, Trophy, CircleCheck as CheckCircle, Circle as XCircle, Share2, Lightbulb, X } from 'lucide-react-native';
+import { ArrowLeft, Trophy, CircleCheck as CheckCircle, Circle as XCircle, Share2, Lightbulb, X, Pause, RotateCcw, Home } from 'lucide-react-native';
 import { useQuiz } from '@/contexts/QuizContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { QUIZ_CATEGORIES } from '@/utils/constants';
@@ -21,7 +21,7 @@ const { width } = Dimensions.get('window');
 
 export default function QuizScreen() {
   const { category: categoryId } = useLocalSearchParams<{ category?: string }>();
-  const { state: quizState, startQuiz, submitAnswer, resetQuiz, endGame, getHint, clearExplanation } = useQuiz();
+  const { state: quizState, startQuiz, submitAnswer, resetQuiz, endGame, getHint, clearExplanation, abandonGame } = useQuiz();
   const { state: authState, updateScore } = useAuth();
   
   const [currentGuess, setCurrentGuess] = useState('');
@@ -30,6 +30,7 @@ export default function QuizScreen() {
   const [showExplanation, setShowExplanation] = useState(false);
   const [currentHints, setCurrentHints] = useState<string[]>([]);
   const [fadeAnim] = useState(new Animated.Value(0));
+  const [showResults, setShowResults] = useState(false);
 
   const category = QUIZ_CATEGORIES.find(cat => cat.id === categoryId);
 
@@ -100,26 +101,22 @@ export default function QuizScreen() {
     if (authState.isAuthenticated) {
       updateScore(quizState.score);
     }
+    setShowResults(true);
+  };
 
-    const foundCount = quizState.foundItems.length;
-    const totalItems = 10;
-    const maxScore = totalItems * 3;
-
+  const handleAbandon = () => {
     Alert.alert(
-      'Quiz terminé !',
-      `Score : ${quizState.score}/${maxScore} points\nTrouvés : ${foundCount}/${totalItems} éléments`,
+      'Abandonner la partie ?',
+      'Votre progression sera sauvegardée et vous pourrez reprendre plus tard.',
       [
-        {
-          text: 'Partager',
-          onPress: handleShare
-        },
-        {
-          text: 'Rejouer',
-          onPress: handleRestart
-        },
-        {
-          text: 'Accueil',
-          onPress: () => router.push('/')
+        { text: 'Continuer', style: 'cancel' },
+        { 
+          text: 'Abandonner', 
+          style: 'destructive',
+          onPress: () => {
+            abandonGame();
+            router.back();
+          }
         }
       ]
     );
@@ -498,6 +495,176 @@ const styles = StyleSheet.create({
     color: '#64748B',
     fontSize: 14,
     fontWeight: '600',
+  },
+  abandonButton: {
+    flex: 1,
+    backgroundColor: '#FEF2F2',
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  abandonButtonText: {
+    color: '#DC2626',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  resultsContainer: {
+    backgroundColor: '#FFFFFF',
+    margin: 20,
+    borderRadius: 16,
+    padding: 24,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  scoreDisplay: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  finalScore: {
+    fontSize: 48,
+    fontWeight: '800',
+    color: '#2563EB',
+    marginTop: 12,
+  },
+  scoreLabel: {
+    fontSize: 16,
+    color: '#64748B',
+    fontWeight: '600',
+  },
+  percentageText: {
+    fontSize: 18,
+    color: '#059669',
+    fontWeight: '700',
+    marginTop: 8,
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    gap: 16,
+    marginBottom: 24,
+  },
+  statCard: {
+    flex: 1,
+    backgroundColor: '#F8FAFC',
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+  },
+  statValue: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#1E293B',
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: '#64748B',
+    fontWeight: '600',
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    gap: 12,
+    width: '100%',
+  },
+  shareButton: {
+    flex: 1,
+    backgroundColor: '#2563EB',
+    borderRadius: 12,
+    paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  shareButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  replayButton: {
+    flex: 1,
+    backgroundColor: '#EFF6FF',
+    borderRadius: 12,
+    paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
+  },
+  replayButtonText: {
+    color: '#2563EB',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  completeAnswers: {
+    backgroundColor: '#FFFFFF',
+    marginHorizontal: 20,
+    marginBottom: 20,
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  completeAnswersTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  completeAnswerItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 12,
+    marginBottom: 8,
+    gap: 12,
+  },
+  completeAnswerFound: {
+    backgroundColor: '#ECFDF5',
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+  },
+  completeAnswerMissed: {
+    backgroundColor: '#FEF2F2',
+    borderWidth: 1,
+    borderColor: '#FECACA',
+  },
+  completeAnswerPosition: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#2563EB',
+    width: 32,
+  },
+  completeAnswerText: {
+    fontSize: 16,
+    fontWeight: '600',
+    flex: 1,
+  },
+  completeAnswerTextFound: {
+    color: '#059669',
+  },
+  completeAnswerTextMissed: {
+    color: '#DC2626',
   },
   feedbackContainer: {
     flexDirection: 'row',

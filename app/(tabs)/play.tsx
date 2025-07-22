@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,9 +6,10 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
+  TextInput,
 } from 'react-native';
 import { router } from 'expo-router';
-import { Play, Star } from 'lucide-react-native';
+import { Play, Star, Search, Filter } from 'lucide-react-native';
 import { QUIZ_CATEGORIES, CATEGORY_ICONS } from '@/utils/constants';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -16,6 +17,17 @@ const { width } = Dimensions.get('window');
 
 export default function PlayScreen() {
   const { state: authState } = useAuth();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(null);
+
+  const difficulties = ['Facile', 'Moyen', 'Difficile'];
+
+  const filteredCategories = QUIZ_CATEGORIES.filter(category => {
+    const matchesSearch = category.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         category.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesDifficulty = !selectedDifficulty || category.difficulty === selectedDifficulty;
+    return matchesSearch && matchesDifficulty;
+  });
 
   const handleCategoryPress = (categoryId: string) => {
     if (!authState.isAuthenticated) {
@@ -25,16 +37,57 @@ export default function PlayScreen() {
     router.push(`/quiz?category=${categoryId}`);
   };
 
+  const handleDifficultyFilter = (difficulty: string) => {
+    setSelectedDifficulty(selectedDifficulty === difficulty ? null : difficulty);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Choisir une catégorie</Text>
-        <Text style={styles.subtitle}>Sélectionnez un quiz pour commencer</Text>
+        <Text style={styles.subtitle}>{QUIZ_CATEGORIES.length} quiz disponibles</Text>
+      </View>
+
+      <View style={styles.filtersContainer}>
+        <View style={styles.searchContainer}>
+          <Search size={20} color="#64748B" />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Rechercher une catégorie..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
+
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          style={styles.difficultyFilters}
+          contentContainerStyle={styles.difficultyFiltersContent}
+        >
+          {difficulties.map((difficulty) => (
+            <TouchableOpacity
+              key={difficulty}
+              style={[
+                styles.difficultyChip,
+                selectedDifficulty === difficulty && styles.difficultyChipActive
+              ]}
+              onPress={() => handleDifficultyFilter(difficulty)}
+            >
+              <Text style={[
+                styles.difficultyChipText,
+                selectedDifficulty === difficulty && styles.difficultyChipTextActive
+              ]}>
+                {difficulty}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.categoriesGrid}>
-          {QUIZ_CATEGORIES.map((category) => {
+          {filteredCategories.map((category) => {
             const IconComponent = CATEGORY_ICONS[category.id as keyof typeof CATEGORY_ICONS];
             return (
               <TouchableOpacity
@@ -61,22 +114,46 @@ export default function PlayScreen() {
                   </View>
                   <View style={styles.statItem}>
                     <Text style={styles.statIcon}>💡</Text>
-                    <Text style={styles.statText}>Indices disponibles</Text>
+                    <Text style={styles.statText}>3 indices par élément</Text>
+                  </View>
+                  <View style={styles.statItem}>
+                    <Text style={styles.statIcon}>📚</Text>
+                    <Text style={styles.statText}>Explications incluses</Text>
                   </View>
                 </View>
 
                 <View style={styles.categoryFooter}>
-                  <View style={styles.playButton}>
-                    <Play size={16} color="#FFFFFF" />
-                    <Text style={styles.playButtonText}>
-                      {authState.isAuthenticated ? 'Jouer' : 'Connexion requise'}
+                  <View style={styles.previewInfo}>
+                    <Text style={styles.previewText}>
+                      Exemple : {category.items[0]}, {category.items[1]}...
                     </Text>
                   </View>
+                  <TouchableOpacity 
+                    style={[
+                      styles.playButton,
+                      !authState.isAuthenticated && styles.playButtonDisabled
+                    ]}
+                    onPress={() => handleCategoryPress(category.id)}
+                  >
+                    <Play size={16} color="#FFFFFF" />
+                    <Text style={styles.playButtonText}>
+                      {authState.isAuthenticated ? 'Démarrer' : 'Connexion requise'}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               </TouchableOpacity>
             );
           })}
         </View>
+
+        {filteredCategories.length === 0 && (
+          <View style={styles.noResults}>
+            <Text style={styles.noResultsTitle}>Aucune catégorie trouvée</Text>
+            <Text style={styles.noResultsText}>
+              Essayez de modifier vos critères de recherche
+            </Text>
+          </View>
+        )}
 
         {!authState.isAuthenticated && (
           <View style={styles.authPrompt}>
@@ -120,6 +197,54 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#64748B',
     fontWeight: '500',
+  },
+  filtersContainer: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 20,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F8FAFC',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    marginBottom: 16,
+    gap: 12,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: '#1E293B',
+  },
+  difficultyFilters: {
+    flexGrow: 0,
+  },
+  difficultyFiltersContent: {
+    gap: 8,
+  },
+  difficultyChip: {
+    backgroundColor: '#F1F5F9',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  difficultyChipActive: {
+    backgroundColor: '#2563EB',
+    borderColor: '#2563EB',
+  },
+  difficultyChipText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#64748B',
+  },
+  difficultyChipTextActive: {
+    color: '#FFFFFF',
   },
   content: {
     flex: 1,
@@ -179,14 +304,13 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   categoryStats: {
-    flexDirection: 'row',
-    gap: 16,
+    gap: 8,
     marginBottom: 16,
   },
   statItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 6,
   },
   statIcon: {
     fontSize: 16,
@@ -197,21 +321,50 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   categoryFooter: {
-    alignItems: 'flex-end',
+    gap: 12,
+  },
+  previewInfo: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 8,
+    padding: 12,
+  },
+  previewText: {
+    fontSize: 12,
+    color: '#64748B',
+    fontStyle: 'italic',
   },
   playButton: {
     backgroundColor: '#2563EB',
     borderRadius: 12,
-    paddingVertical: 10,
+    paddingVertical: 12,
     paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: 6,
+  },
+  playButtonDisabled: {
+    backgroundColor: '#94A3B8',
   },
   playButtonText: {
     color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '600',
+  },
+  noResults: {
+    alignItems: 'center',
+    padding: 40,
+  },
+  noResultsTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginBottom: 8,
+  },
+  noResultsText: {
+    fontSize: 14,
+    color: '#64748B',
+    textAlign: 'center',
   },
   authPrompt: {
     backgroundColor: '#FFFFFF',

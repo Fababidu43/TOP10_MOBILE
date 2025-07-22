@@ -17,6 +17,18 @@ export interface QuizCategory {
   hints: string[][];
 }
 
+export interface SavedGame {
+  id: string;
+  categoryId: string;
+  categoryTitle: string;
+  foundItems: QuizItem[];
+  remainingItems: QuizItem[];
+  score: number;
+  attempts: number;
+  usedHints: { [key: string]: number };
+  savedAt: Date;
+}
+
 interface QuizState {
   currentCategory: QuizCategory | null;
   questions: QuizItem[];
@@ -27,6 +39,8 @@ interface QuizState {
   maxAttempts: number;
   usedHints: { [key: string]: number };
   currentExplanation: string | null;
+  savedGames: SavedGame[];
+  isGameAbandoned: boolean;
 }
 
 interface QuizContextType {
@@ -37,6 +51,10 @@ interface QuizContextType {
   endGame: () => void;
   getHint: (itemId: string) => string | null;
   clearExplanation: () => void;
+  abandonGame: () => void;
+  resumeGame: (savedGame: SavedGame) => void;
+  deleteSavedGame: (gameId: string) => void;
+  getSavedGames: () => SavedGame[];
 }
 
 const QuizContext = createContext<QuizContextType | undefined>(undefined);
@@ -51,6 +69,8 @@ const initialState: QuizState = {
   maxAttempts: 30, // 3 attempts per item * 10 items
   usedHints: {},
   currentExplanation: null,
+  savedGames: [],
+  isGameAbandoned: false,
 };
 
 // Fonction pour mélanger un tableau
@@ -178,6 +198,57 @@ export function QuizProvider({ children }: { children: ReactNode }) {
     }));
   };
 
+  const abandonGame = () => {
+    if (!state.currentCategory || state.gameOver) return;
+    
+    const savedGame: SavedGame = {
+      id: Date.now().toString(),
+      categoryId: state.currentCategory.id,
+      categoryTitle: state.currentCategory.title,
+      foundItems: state.foundItems,
+      remainingItems: state.questions,
+      score: state.score,
+      attempts: state.attempts,
+      usedHints: state.usedHints,
+      savedAt: new Date(),
+    };
+    
+    setState(prev => ({
+      ...prev,
+      savedGames: [...prev.savedGames, savedGame],
+      isGameAbandoned: true,
+      gameOver: true,
+    }));
+  };
+  
+  const resumeGame = (savedGame: SavedGame) => {
+    const category = state.currentCategory; // Assume category is already loaded
+    if (!category) return;
+    
+    setState(prev => ({
+      ...prev,
+      currentCategory: category,
+      questions: savedGame.remainingItems,
+      foundItems: savedGame.foundItems,
+      score: savedGame.score,
+      attempts: savedGame.attempts,
+      usedHints: savedGame.usedHints,
+      gameOver: false,
+      isGameAbandoned: false,
+      currentExplanation: null,
+    }));
+  };
+  
+  const deleteSavedGame = (gameId: string) => {
+    setState(prev => ({
+      ...prev,
+      savedGames: prev.savedGames.filter(game => game.id !== gameId),
+    }));
+  };
+  
+  const getSavedGames = (): SavedGame[] => {
+    return state.savedGames;
+  };
   return (
     <QuizContext.Provider
       value={{
@@ -188,6 +259,10 @@ export function QuizProvider({ children }: { children: ReactNode }) {
         endGame,
         getHint,
         clearExplanation,
+        abandonGame,
+        resumeGame,
+        deleteSavedGame,
+        getSavedGames,
       }}
     >
       {children}
