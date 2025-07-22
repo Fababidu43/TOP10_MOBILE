@@ -8,7 +8,7 @@ import {
   Share,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Trophy, Share2, RotateCcw, Home, CheckCircle, XCircle } from 'lucide-react-native';
+import { Trophy, Share2, RotateCcw, Chrome as Home, CircleCheck as CheckCircle, Circle as XCircle } from 'lucide-react-native';
 import { QUIZ_CATEGORIES } from '@/utils/constants';
 import { generateShareMessage } from '@/utils/helpers';
 
