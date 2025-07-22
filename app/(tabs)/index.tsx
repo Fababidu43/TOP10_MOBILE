@@ -30,25 +30,6 @@ export default function HomeScreen() {
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.featuredSection}>
-          <View style={styles.featuredCard}>
-            <View style={styles.featuredContent}>
-              <TrendingUp size={32} color="#FFFFFF" />
-              <Text style={styles.featuredTitle}>Quiz du jour</Text>
-              <Text style={styles.featuredDescription}>
-                Films de science-fiction les plus populaires
-              </Text>
-            </View>
-            <TouchableOpacity 
-              style={styles.featuredButton}
-              onPress={() => handleCategoryPress('sci-fi-movies')}
-            >
-              <Play size={20} color="#2563EB" />
-              <Text style={styles.featuredButtonText}>Jouer</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
         <View style={styles.categoriesSection}>
           <Text style={styles.sectionTitle}>Catégories populaires</Text>
           <View style={styles.categoriesGrid}>
@@ -126,46 +107,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-  },
-  featuredSection: {
-    padding: 20,
-  },
-  featuredCard: {
-    backgroundColor: '#2563EB',
-    borderRadius: 16,
-    padding: 24,
-    position: 'relative',
-    overflow: 'hidden',
-  },
-  featuredContent: {
-    marginBottom: 20,
-  },
-  featuredTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    marginTop: 12,
-    marginBottom: 8,
-  },
-  featuredDescription: {
-    fontSize: 16,
-    color: '#BFDBFE',
-    fontWeight: '500',
-  },
-  featuredButton: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    gap: 8,
-  },
-  featuredButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#2563EB',
   },
   categoriesSection: {
     padding: 20,

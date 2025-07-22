@@ -13,6 +13,8 @@ export interface QuizCategory {
   items: string[];
   difficulty: 'Facile' | 'Moyen' | 'Difficile';
   color: string;
+  explanations: string[];
+  hints: string[][];
 }
 
 interface QuizState {
@@ -21,18 +23,20 @@ interface QuizState {
   foundItems: QuizItem[];
   score: number;
   gameOver: boolean;
-  timeRemaining: number;
   attempts: number;
   maxAttempts: number;
+  usedHints: { [key: string]: number };
+  currentExplanation: string | null;
 }
 
 interface QuizContextType {
   state: QuizState;
   startQuiz: (category: QuizCategory) => void;
-  submitAnswer: (answer: string) => { isCorrect: boolean; item?: QuizItem; points: number };
+  submitAnswer: (answer: string) => { isCorrect: boolean; item?: QuizItem; points: number; explanation?: string };
   resetQuiz: () => void;
-  setTimeRemaining: (time: number) => void;
   endGame: () => void;
+  getHint: (itemId: string) => string | null;
+  clearExplanation: () => void;
 }
 
 const QuizContext = createContext<QuizContextType | undefined>(undefined);
@@ -43,9 +47,10 @@ const initialState: QuizState = {
   foundItems: [],
   score: 0,
   gameOver: false,
-  timeRemaining: 300,
   attempts: 0,
   maxAttempts: 30, // 3 attempts per item * 10 items
+  usedHints: {},
+  currentExplanation: null,
 };
 
 // Fonction pour mélanger un tableau
@@ -76,11 +81,11 @@ export function QuizProvider({ children }: { children: ReactNode }) {
       ...initialState,
       currentCategory: category,
       questions: shuffle(questions),
-      timeRemaining: 300,
+      usedHints: {},
     });
   };
 
-  const submitAnswer = (answer: string): { isCorrect: boolean; item?: QuizItem; points: number } => {
+  const submitAnswer = (answer: string): { isCorrect: boolean; item?: QuizItem; points: number; explanation?: string } => {
     if (state.gameOver || state.questions.length === 0) {
       return { isCorrect: false, points: 0 };
     }
@@ -103,6 +108,9 @@ export function QuizProvider({ children }: { children: ReactNode }) {
       
       const newScore = state.score + points;
       const isGameComplete = remainingQuestions.length === 0;
+      
+      // Récupérer l'explication
+      const explanation = state.currentCategory?.explanations[foundItem.position - 1];
 
       setState(prev => ({
         ...prev,
@@ -111,9 +119,10 @@ export function QuizProvider({ children }: { children: ReactNode }) {
         score: newScore,
         attempts: newAttempts,
         gameOver: isGameComplete,
+        currentExplanation: explanation || null,
       }));
 
-      return { isCorrect: true, item: foundItem, points };
+      return { isCorrect: true, item: foundItem, points, explanation };
     } else {
       // Mauvaise réponse
       setState(prev => ({
@@ -130,18 +139,42 @@ export function QuizProvider({ children }: { children: ReactNode }) {
     setState(initialState);
   };
 
-  const setTimeRemaining = (time: number) => {
-    setState(prev => ({
-      ...prev,
-      timeRemaining: time,
-      gameOver: prev.gameOver || time <= 0,
-    }));
-  };
-
   const endGame = () => {
     setState(prev => ({
       ...prev,
       gameOver: true,
+    }));
+  };
+
+  const getHint = (itemId: string): string | null => {
+    if (!state.currentCategory) return null;
+    
+    const item = state.currentCategory.items.find((_, index) => `${state.currentCategory!.id}-${index}` === itemId);
+    if (!item) return null;
+    
+    const itemIndex = state.currentCategory.items.indexOf(item);
+    const hints = state.currentCategory.hints[itemIndex];
+    const usedCount = state.usedHints[itemId] || 0;
+    
+    if (usedCount >= hints.length) return null;
+    
+    const hint = hints[usedCount];
+    
+    setState(prev => ({
+      ...prev,
+      usedHints: {
+        ...prev.usedHints,
+        [itemId]: usedCount + 1,
+      },
+    }));
+    
+    return hint;
+  };
+  
+  const clearExplanation = () => {
+    setState(prev => ({
+      ...prev,
+      currentExplanation: null,
     }));
   };
 
@@ -152,8 +185,9 @@ export function QuizProvider({ children }: { children: ReactNode }) {
         startQuiz,
         submitAnswer,
         resetQuiz,
-        setTimeRemaining,
         endGame,
+        getHint,
+        clearExplanation,
       }}
     >
       {children}

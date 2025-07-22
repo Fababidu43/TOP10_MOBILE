@@ -19,6 +19,30 @@ export const QUIZ_CATEGORIES: QuizCategory[] = [
       'Star Wars: Episode III – Revenge of the Sith',
       'The Lord of the Rings: The Two Towers',
       'Shrek 2'
+    ],
+    explanations: [
+      'Avatar de James Cameron a révolutionné le cinéma avec ses effets visuels 3D et a généré plus de 2,9 milliards de dollars au box-office mondial.',
+      'Titanic reste l\'un des films les plus emblématiques de tous les temps, combinant romance épique et reconstitution historique.',
+      'Le Retour du Roi a couronné la trilogie du Seigneur des Anneaux avec 11 Oscars, un record encore inégalé.',
+      'Pirates des Caraïbes 2 a capitalisé sur le succès du premier film avec des effets spéciaux spectaculaires.',
+      'The Dark Knight de Christopher Nolan a redéfini le genre super-héroïque avec une approche plus sombre et réaliste.',
+      'Harry Potter à l\'école des sorciers a lancé une franchise qui a marqué toute une génération.',
+      'Le premier Pirates des Caraïbes a relancé la carrière de Johnny Depp et créé un personnage iconique.',
+      'Star Wars Episode III a conclu la prélogie avec des scènes d\'action épiques et l\'origine de Dark Vador.',
+      'Les Deux Tours a maintenu la qualité de la trilogie avec la bataille du Gouffre de Helm.',
+      'Shrek 2 a prouvé que les suites d\'animation pouvaient surpasser l\'original en termes de succès commercial.'
+    ],
+    hints: [
+      ['Film en 3D révolutionnaire', 'Planète Pandora', 'James Cameron'],
+      ['Naufrage célèbre', 'Leonardo DiCaprio', 'Rose et Jack'],
+      ['Trilogie fantasy', '11 Oscars', 'Retour du roi'],
+      ['Pirates et malédiction', 'Johnny Depp', 'Coffre du mort'],
+      ['Super-héros sombre', 'Joker iconique', 'Christopher Nolan'],
+      ['École de magie', 'Garçon à lunettes', 'J.K. Rowling'],
+      ['Premier film pirates', 'Malédiction de la perle noire', 'Jack Sparrow'],
+      ['Prélogie Star Wars', 'Anakin devient Vador', 'Vengeance des Sith'],
+      ['Deuxième film LOTR', 'Bataille du Gouffre de Helm', 'Gollum'],
+      ['Suite d\'animation', 'Ogre vert', 'Chat Potté']
     ]
   },
   {

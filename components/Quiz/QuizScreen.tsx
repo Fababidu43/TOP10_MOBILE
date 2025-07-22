@@ -8,24 +8,28 @@ import {
   ScrollView,
   Alert,
   Dimensions,
+  Animated,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, Clock, Trophy, CircleCheck as CheckCircle, Circle as XCircle, Share2 } from 'lucide-react-native';
+import { ArrowLeft, Trophy, CircleCheck as CheckCircle, Circle as XCircle, Share2, Lightbulb, X } from 'lucide-react-native';
 import { useQuiz } from '@/contexts/QuizContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { QUIZ_CATEGORIES } from '@/utils/constants';
-import { formatTime, generateShareMessage } from '@/utils/helpers';
+import { generateShareMessage } from '@/utils/helpers';
 
 const { width } = Dimensions.get('window');
 
 export default function QuizScreen() {
   const { category: categoryId } = useLocalSearchParams<{ category?: string }>();
-  const { state: quizState, startQuiz, submitAnswer, resetQuiz, setTimeRemaining, endGame } = useQuiz();
+  const { state: quizState, startQuiz, submitAnswer, resetQuiz, endGame, getHint, clearExplanation } = useQuiz();
   const { state: authState, updateScore } = useAuth();
   
   const [currentGuess, setCurrentGuess] = useState('');
   const [feedback, setFeedback] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showExplanation, setShowExplanation] = useState(false);
+  const [currentHints, setCurrentHints] = useState<string[]>([]);
+  const [fadeAnim] = useState(new Animated.Value(0));
 
   const category = QUIZ_CATEGORIES.find(cat => cat.id === categoryId);
 
@@ -36,14 +40,15 @@ export default function QuizScreen() {
   }, [category]);
 
   useEffect(() => {
-    if (!quizState.gameOver && quizState.timeRemaining > 0) {
-      const timer = setInterval(() => {
-        setTimeRemaining(quizState.timeRemaining - 1);
-      }, 1000);
-
-      return () => clearInterval(timer);
+    if (quizState.currentExplanation && !showExplanation) {
+      setShowExplanation(true);
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
     }
-  }, [quizState.timeRemaining, quizState.gameOver]);
+  }, [quizState.currentExplanation]);
 
   useEffect(() => {
     if (quizState.gameOver) {
@@ -62,6 +67,7 @@ export default function QuizScreen() {
         message: `Correct ! +${result.points} points`,
         type: 'success'
       });
+      setCurrentHints([]); // Reset hints for next question
     } else {
       setFeedback({
         message: 'Réponse incorrecte, essayez encore !',
@@ -76,6 +82,18 @@ export default function QuizScreen() {
       setFeedback(null);
       setIsSubmitting(false);
     }, 2000);
+  };
+
+  const handleGetHint = () => {
+    if (quizState.questions.length === 0) return;
+    
+    // Prendre le premier item restant pour l'indice
+    const firstRemainingItem = quizState.questions[0];
+    const hint = getHint(firstRemainingItem.id);
+    
+    if (hint) {
+      setCurrentHints(prev => [...prev, hint]);
+    }
   };
 
   const handleGameEnd = () => {
@@ -121,7 +139,21 @@ export default function QuizScreen() {
       startQuiz(category);
       setCurrentGuess('');
       setFeedback(null);
+      setShowExplanation(false);
+      setCurrentHints([]);
+      clearExplanation();
     }
+  };
+
+  const handleCloseExplanation = () => {
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      setShowExplanation(false);
+      clearExplanation();
+    });
   };
 
   const handleSkip = () => {
@@ -140,6 +172,10 @@ export default function QuizScreen() {
   const foundItems = quizState.foundItems.length;
   const progress = (foundItems / 10) * 100;
 
+  // Vérifier s'il reste des indices disponibles
+  const canGetHint = remainingItems > 0 && quizState.questions[0] && 
+    (quizState.usedHints[quizState.questions[0].id] || 0) < 3;
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -147,10 +183,7 @@ export default function QuizScreen() {
           <ArrowLeft size={24} color="#1E293B" />
         </TouchableOpacity>
         <Text style={styles.quizTitle}>{category.title}</Text>
-        <View style={styles.timerContainer}>
-          <Clock size={16} color="#F97316" />
-          <Text style={styles.timer}>{formatTime(quizState.timeRemaining)}</Text>
-        </View>
+        <View style={styles.placeholder} />
       </View>
 
       <View style={styles.progressContainer}>
@@ -176,6 +209,15 @@ export default function QuizScreen() {
             {remainingItems} élément{remainingItems > 1 ? 's' : ''} restant{remainingItems > 1 ? 's' : ''}
           </Text>
 
+          {currentHints.length > 0 && (
+            <View style={styles.hintsContainer}>
+              <Text style={styles.hintsTitle}>💡 Indices :</Text>
+              {currentHints.map((hint, index) => (
+                <Text key={index} style={styles.hintText}>• {hint}</Text>
+              ))}
+            </View>
+          )}
+
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.input}
@@ -193,6 +235,26 @@ export default function QuizScreen() {
               disabled={isSubmitting || !currentGuess.trim()}
             >
               <Text style={styles.submitButtonText}>Valider</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.actionButtons}>
+            <TouchableOpacity 
+              style={[styles.hintButton, !canGetHint && styles.hintButtonDisabled]}
+              onPress={handleGetHint}
+              disabled={!canGetHint}
+            >
+              <Lightbulb size={16} color={canGetHint ? "#F59E0B" : "#94A3B8"} />
+              <Text style={[styles.hintButtonText, !canGetHint && styles.hintButtonTextDisabled]}>
+                Indice ({canGetHint ? 3 - (quizState.usedHints[quizState.questions[0]?.id] || 0) : 0})
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={styles.skipButton}
+              onPress={handleSkip}
+            >
+              <Text style={styles.skipButtonText}>Terminer</Text>
             </TouchableOpacity>
           </View>
 
@@ -214,14 +276,19 @@ export default function QuizScreen() {
               </Text>
             </View>
           )}
-
-          <TouchableOpacity 
-            style={styles.skipButton}
-            onPress={handleSkip}
-          >
-            <Text style={styles.skipButtonText}>Terminer le quiz</Text>
-          </TouchableOpacity>
         </View>
+      )}
+
+      {showExplanation && quizState.currentExplanation && (
+        <Animated.View style={[styles.explanationContainer, { opacity: fadeAnim }]}>
+          <View style={styles.explanationHeader}>
+            <Text style={styles.explanationTitle}>💡 Le saviez-vous ?</Text>
+            <TouchableOpacity onPress={handleCloseExplanation} style={styles.closeButton}>
+              <X size={20} color="#64748B" />
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.explanationText}>{quizState.currentExplanation}</Text>
+        </Animated.View>
       )}
 
       <ScrollView style={styles.answersContainer}>
@@ -275,15 +342,8 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
   },
-  timerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  timer: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#F97316',
+  placeholder: {
+    width: 40,
   },
   progressContainer: {
     flexDirection: 'row',
@@ -351,12 +411,29 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#64748B',
     textAlign: 'center',
-    marginBottom: 24,
+    marginBottom: 20,
+  },
+  hintsContainer: {
+    backgroundColor: '#FEF3C7',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+  },
+  hintsTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#92400E',
+    marginBottom: 8,
+  },
+  hintText: {
+    fontSize: 14,
+    color: '#92400E',
+    marginBottom: 4,
   },
   inputContainer: {
     flexDirection: 'row',
     gap: 12,
-    marginBottom: 20,
+    marginBottom: 16,
   },
   input: {
     flex: 1,
@@ -383,6 +460,45 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  actionButtons: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 16,
+  },
+  hintButton: {
+    flex: 1,
+    backgroundColor: '#FEF3C7',
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  hintButtonDisabled: {
+    backgroundColor: '#F1F5F9',
+  },
+  hintButtonText: {
+    color: '#92400E',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  hintButtonTextDisabled: {
+    color: '#94A3B8',
+  },
+  skipButton: {
+    flex: 1,
+    backgroundColor: '#F1F5F9',
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  skipButtonText: {
+    color: '#64748B',
+    fontSize: 14,
+    fontWeight: '600',
+  },
   feedbackContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -390,7 +506,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 12,
-    marginBottom: 16,
   },
   feedbackSuccess: {
     backgroundColor: '#ECFDF5',
@@ -412,16 +527,33 @@ const styles = StyleSheet.create({
   feedbackTextError: {
     color: '#DC2626',
   },
-  skipButton: {
-    backgroundColor: '#F1F5F9',
-    borderRadius: 12,
-    paddingVertical: 12,
-    alignItems: 'center',
+  explanationContainer: {
+    backgroundColor: '#EFF6FF',
+    marginHorizontal: 20,
+    marginTop: 16,
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
   },
-  skipButtonText: {
-    color: '#64748B',
+  explanationHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  explanationTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1E40AF',
+  },
+  closeButton: {
+    padding: 4,
+  },
+  explanationText: {
     fontSize: 14,
-    fontWeight: '600',
+    color: '#1E40AF',
+    lineHeight: 20,
   },
   answersContainer: {
     flex: 1,

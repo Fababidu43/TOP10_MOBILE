@@ -10,13 +10,15 @@ import {
 import { router } from 'expo-router';
 import { User, Settings, Bell, Moon, Sun, Share2, Heart, CircleHelp as HelpCircle, LogOut, CreditCard as Edit3, Crown } from 'lucide-react-native';
 import { useAuth } from '@/contexts/AuthContext';
+import * as Haptics from 'expo-haptics';
+import { Platform } from 'react-native';
 
 export default function ProfileScreen() {
   const { state: authState, logout, updateProfile } = useAuth();
-  const [darkMode, setDarkMode] = useState(false);
-  const [notifications, setNotifications] = useState(true);
-  const [soundEffects, setSoundEffects] = useState(true);
-  const [hapticFeedback, setHapticFeedback] = useState(true);
+  const [darkMode, setDarkMode] = useState(authState.user?.settings.darkMode || false);
+  const [notifications, setNotifications] = useState(authState.user?.settings.notifications || true);
+  const [soundEffects, setSoundEffects] = useState(authState.user?.settings.sounds || true);
+  const [hapticFeedback, setHapticFeedback] = useState(authState.user?.settings.haptics || true);
 
   const avatars = ['🎯', '🎮', '🎬', '🎵', '🌟', '🚀', '🎭', '🎨'];
   const [selectedAvatar, setSelectedAvatar] = useState(authState.user?.avatar || '🎯');
@@ -24,6 +26,35 @@ export default function ProfileScreen() {
   const handleAvatarChange = (avatar: string) => {
     setSelectedAvatar(avatar);
     updateProfile({ avatar });
+    
+    // Haptic feedback
+    if (Platform.OS !== 'web' && hapticFeedback) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+  };
+  
+  const handleSettingChange = (setting: keyof typeof authState.user.settings, value: boolean) => {
+    const newSettings = {
+      ...authState.user?.settings,
+      [setting]: value,
+    };
+    
+    updateProfile({ settings: newSettings });
+    
+    switch (setting) {
+      case 'darkMode':
+        setDarkMode(value);
+        break;
+      case 'notifications':
+        setNotifications(value);
+        break;
+      case 'sounds':
+        setSoundEffects(value);
+        break;
+      case 'haptics':
+        setHapticFeedback(value);
+        break;
+    }
   };
 
   const handleLogout = () => {
@@ -105,7 +136,7 @@ export default function ProfileScreen() {
             </View>
             <Switch
               value={darkMode}
-              onValueChange={setDarkMode}
+              onValueChange={(value) => handleSettingChange('darkMode', value)}
               trackColor={{ false: '#E2E8F0', true: '#2563EB' }}
               thumbColor={darkMode ? '#FFFFFF' : '#FFFFFF'}
             />
@@ -118,7 +149,7 @@ export default function ProfileScreen() {
             </View>
             <Switch
               value={notifications}
-              onValueChange={setNotifications}
+              onValueChange={(value) => handleSettingChange('notifications', value)}
               trackColor={{ false: '#E2E8F0', true: '#2563EB' }}
               thumbColor={notifications ? '#FFFFFF' : '#FFFFFF'}
             />
@@ -131,7 +162,7 @@ export default function ProfileScreen() {
             </View>
             <Switch
               value={soundEffects}
-              onValueChange={setSoundEffects}
+              onValueChange={(value) => handleSettingChange('sounds', value)}
               trackColor={{ false: '#E2E8F0', true: '#2563EB' }}
               thumbColor={soundEffects ? '#FFFFFF' : '#FFFFFF'}
             />
@@ -144,7 +175,7 @@ export default function ProfileScreen() {
             </View>
             <Switch
               value={hapticFeedback}
-              onValueChange={setHapticFeedback}
+              onValueChange={(value) => handleSettingChange('haptics', value)}
               trackColor={{ false: '#E2E8F0', true: '#2563EB' }}
               thumbColor={hapticFeedback ? '#FFFFFF' : '#FFFFFF'}
             />

@@ -9,6 +9,12 @@ export interface User {
   totalPoints: number;
   quizCompleted: number;
   bestScore: number;
+  settings: {
+    darkMode: boolean;
+    notifications: boolean;
+    sounds: boolean;
+    haptics: boolean;
+  };
 }
 
 interface AuthState {
@@ -44,6 +50,12 @@ const mockUser: User = {
   totalPoints: 127,
   quizCompleted: 8,
   bestScore: 27,
+  settings: {
+    darkMode: false,
+    notifications: true,
+    sounds: true,
+    haptics: true,
+  },
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
