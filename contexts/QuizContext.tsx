@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { isAnswerCorrectWithTolerance } from '../utils/helpers';
 
 export interface QuizItem {
   id: string;
