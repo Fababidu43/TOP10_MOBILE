@@ -36,7 +36,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const initialState: AuthState = {
   user: null,
-  isLoading: false,
+  isLoading: true,
   isAuthenticated: false,
 };
 
@@ -64,15 +64,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Simuler la vérification d'un token stocké
     const checkAuthStatus = async () => {
-      setState(prev => ({ ...prev, isLoading: true }));
       
       // Simuler un délai de vérification
       setTimeout(() => {
-        // Pour la démo, on connecte automatiquement l'utilisateur
+        // Pour la démo, l'utilisateur n'est pas connecté par défaut
         setState({
-          user: mockUser,
+          user: null,
           isLoading: false,
-          isAuthenticated: true,
+          isAuthenticated: false,
         });
       }, 1000);
     };

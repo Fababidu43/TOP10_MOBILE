@@ -11,19 +11,38 @@ import {
   ScrollView,
 } from 'react-native';
 import { router } from 'expo-router';
-import { ArrowLeft, Mail, Lock, Eye, EyeOff } from 'lucide-react-native';
+import { ArrowLeft, Mail, Lock, Eye, EyeOff, User } from 'lucide-react-native';
 import { useAuth } from '@/contexts/AuthContext';
 import { isValidEmail, isValidPassword } from '@/utils/helpers';
 
-export default function LoginScreen() {
-  const { login, state } = useAuth();
+export default function RegisterScreen() {
+  const { register, state } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [username, setUsername] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [errors, setErrors] = useState<{ 
+    email?: string; 
+    password?: string; 
+    confirmPassword?: string;
+    username?: string;
+  }>({});
 
   const validateForm = (): boolean => {
-    const newErrors: { email?: string; password?: string } = {};
+    const newErrors: { 
+      email?: string; 
+      password?: string; 
+      confirmPassword?: string;
+      username?: string;
+    } = {};
+
+    if (!username.trim()) {
+      newErrors.username = 'Le nom d\'utilisateur est requis';
+    } else if (username.trim().length < 3) {
+      newErrors.username = 'Le nom d\'utilisateur doit contenir au moins 3 caractères';
+    }
 
     if (!email) {
       newErrors.email = 'L\'email est requis';
@@ -37,22 +56,28 @@ export default function LoginScreen() {
       newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères';
     }
 
+    if (!confirmPassword) {
+      newErrors.confirmPassword = 'Confirmez votre mot de passe';
+    } else if (password !== confirmPassword) {
+      newErrors.confirmPassword = 'Les mots de passe ne correspondent pas';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     if (!validateForm()) return;
 
     try {
-      const success = await login(email, password);
+      const success = await register(email, password, username);
       if (success) {
         router.replace('/');
       } else {
-        Alert.alert('Erreur', 'Email ou mot de passe incorrect');
+        Alert.alert('Erreur', 'Impossible de créer le compte');
       }
     } catch (error) {
-      Alert.alert('Erreur', 'Une erreur est survenue lors de la connexion');
+      Alert.alert('Erreur', 'Une erreur est survenue lors de la création du compte');
     }
   };
 
@@ -65,14 +90,30 @@ export default function LoginScreen() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <ArrowLeft size={24} color="#1E293B" />
         </TouchableOpacity>
-        <Text style={styles.title}>Connexion</Text>
+        <Text style={styles.title}>Inscription</Text>
         <View style={styles.placeholder} />
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.form}>
-          <Text style={styles.welcomeText}>Bon retour !</Text>
-          <Text style={styles.subtitleText}>Connectez-vous pour continuer</Text>
+          <Text style={styles.welcomeText}>Créer un compte</Text>
+          <Text style={styles.subtitleText}>Rejoignez la communauté Top 10 Quiz</Text>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Nom d'utilisateur</Text>
+            <View style={[styles.inputContainer, errors.username && styles.inputError]}>
+              <User size={20} color="#64748B" />
+              <TextInput
+                style={styles.input}
+                value={username}
+                onChangeText={setUsername}
+                placeholder="Votre pseudo"
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+            </View>
+            {errors.username && <Text style={styles.errorText}>{errors.username}</Text>}
+          </View>
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Email</Text>
@@ -115,17 +156,37 @@ export default function LoginScreen() {
             {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
           </View>
 
-          <TouchableOpacity style={styles.forgotPassword}>
-            <Text style={styles.forgotPasswordText}>Mot de passe oublié ?</Text>
-          </TouchableOpacity>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Confirmer le mot de passe</Text>
+            <View style={[styles.inputContainer, errors.confirmPassword && styles.inputError]}>
+              <Lock size={20} color="#64748B" />
+              <TextInput
+                style={styles.input}
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                placeholder="••••••••"
+                secureTextEntry={!showConfirmPassword}
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+              <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+                {showConfirmPassword ? (
+                  <EyeOff size={20} color="#64748B" />
+                ) : (
+                  <Eye size={20} color="#64748B" />
+                )}
+              </TouchableOpacity>
+            </View>
+            {errors.confirmPassword && <Text style={styles.errorText}>{errors.confirmPassword}</Text>}
+          </View>
 
           <TouchableOpacity 
-            style={[styles.loginButton, state.isLoading && styles.loginButtonDisabled]}
-            onPress={handleLogin}
+            style={[styles.registerButton, state.isLoading && styles.registerButtonDisabled]}
+            onPress={handleRegister}
             disabled={state.isLoading}
           >
-            <Text style={styles.loginButtonText}>
-              {state.isLoading ? 'Connexion...' : 'Se connecter'}
+            <Text style={styles.registerButtonText}>
+              {state.isLoading ? 'Création...' : 'Créer mon compte'}
             </Text>
           </TouchableOpacity>
 
@@ -135,9 +196,9 @@ export default function LoginScreen() {
             <View style={styles.dividerLine} />
           </View>
 
-          <TouchableOpacity style={styles.registerLink}>
-            <Text style={styles.registerLinkText}>
-              Pas encore de compte ? <Text style={styles.registerLinkBold} onPress={() => router.push('/register')}>Créer un compte</Text>
+          <TouchableOpacity style={styles.loginLink} onPress={() => router.push('/login')}>
+            <Text style={styles.loginLinkText}>
+              Déjà un compte ? <Text style={styles.loginLinkBold}>Se connecter</Text>
             </Text>
           </TouchableOpacity>
         </View>
@@ -225,26 +286,17 @@ const styles = StyleSheet.create({
     color: '#DC2626',
     marginTop: 4,
   },
-  forgotPassword: {
-    alignSelf: 'flex-end',
-    marginBottom: 24,
-  },
-  forgotPasswordText: {
-    fontSize: 14,
-    color: '#2563EB',
-    fontWeight: '600',
-  },
-  loginButton: {
+  registerButton: {
     backgroundColor: '#2563EB',
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
     marginBottom: 24,
   },
-  loginButtonDisabled: {
+  registerButtonDisabled: {
     backgroundColor: '#94A3B8',
   },
-  loginButtonText: {
+  registerButtonText: {
     fontSize: 16,
     fontWeight: '700',
     color: '#FFFFFF',
@@ -264,14 +316,14 @@ const styles = StyleSheet.create({
     color: '#64748B',
     paddingHorizontal: 16,
   },
-  registerLink: {
+  loginLink: {
     alignItems: 'center',
   },
-  registerLinkText: {
+  loginLinkText: {
     fontSize: 14,
     color: '#64748B',
   },
-  registerLinkBold: {
+  loginLinkBold: {
     color: '#2563EB',
     fontWeight: '700',
   },

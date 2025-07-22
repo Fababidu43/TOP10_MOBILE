@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Trophy, Medal, Star, TrendingUp, Users, Calendar, Target, Clock } from 'lucide-react-native';
+import { useAuth } from '@/contexts/AuthContext';
+import { router } from 'expo-router';
 
 const achievements = [
   {
@@ -48,6 +50,9 @@ const recentScores = [
     category: 'Films des années 2000',
     score: 24,
     maxScore: 30,
+    foundItems: 8,
+    totalItems: 10,
+    attempts: 15,
     date: '2025-01-12',
     rank: 8,
   },
@@ -55,6 +60,9 @@ const recentScores = [
     category: 'Séries Netflix',
     score: 18,
     maxScore: 30,
+    foundItems: 6,
+    totalItems: 10,
+    attempts: 18,
     date: '2025-01-11',
     rank: 15,
   },
@@ -62,12 +70,39 @@ const recentScores = [
     category: 'Jeux vidéo populaires',
     score: 27,
     maxScore: 30,
+    foundItems: 9,
+    totalItems: 10,
+    attempts: 12,
     date: '2025-01-10',
     rank: 3,
   },
 ];
 
 export default function ScoresScreen() {
+  const { state: authState } = useAuth();
+
+  if (!authState.isAuthenticated) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Mes Scores</Text>
+        </View>
+        <View style={styles.notAuthenticatedContainer}>
+          <Text style={styles.notAuthenticatedTitle}>Connexion requise</Text>
+          <Text style={styles.notAuthenticatedText}>
+            Connectez-vous pour voir vos scores et suivre vos performances.
+          </Text>
+          <TouchableOpacity 
+            style={styles.loginButton}
+            onPress={() => router.push('/login')}
+          >
+            <Text style={styles.loginButtonText}>Se connecter</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -304,6 +339,37 @@ const styles = StyleSheet.create({
   },
   achievementTitleLocked: {
     color: '#94A3B8',
+  },
+  notAuthenticatedContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 40,
+  },
+  notAuthenticatedTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  notAuthenticatedText: {
+    fontSize: 16,
+    color: '#64748B',
+    textAlign: 'center',
+    lineHeight: 24,
+    marginBottom: 32,
+  },
+  loginButton: {
+    backgroundColor: '#2563EB',
+    borderRadius: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+  },
+  loginButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '700',
   },
   achievementDescription: {
     fontSize: 14,

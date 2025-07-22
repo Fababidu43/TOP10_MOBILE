@@ -102,28 +102,8 @@ export default function QuizScreen() {
       updateScore(quizState.score);
     }
 
-    const foundCount = quizState.foundItems.length;
-    const totalItems = 10;
-    const maxScore = totalItems * 3;
-
-    Alert.alert(
-      'Quiz terminé !',
-      `Score : ${quizState.score}/${maxScore} points\nTrouvés : ${foundCount}/${totalItems} éléments`,
-      [
-        {
-          text: 'Partager',
-          onPress: handleShare
-        },
-        {
-          text: 'Rejouer',
-          onPress: handleRestart
-        },
-        {
-          text: 'Accueil',
-          onPress: () => router.push('/')
-        }
-      ]
-    );
+    // Naviguer vers l'écran de résultats
+    router.replace(`/results?categoryId=${category.id}&score=${quizState.score}&foundCount=${quizState.foundItems.length}&totalItems=10`);
   };
 
   const handleShare = () => {
