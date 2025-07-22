@@ -15,10 +15,10 @@ import { Platform } from 'react-native';
 
 export default function ProfileScreen() {
   const { state: authState, logout, updateProfile } = useAuth();
-  const [darkMode, setDarkMode] = useState(authState.user?.settings.darkMode || false);
-  const [notifications, setNotifications] = useState(authState.user?.settings.notifications || true);
-  const [soundEffects, setSoundEffects] = useState(authState.user?.settings.sounds || true);
-  const [hapticFeedback, setHapticFeedback] = useState(authState.user?.settings.haptics || true);
+  const [darkMode, setDarkMode] = useState(authState.user?.settings?.darkMode || false);
+  const [notifications, setNotifications] = useState(authState.user?.settings?.notifications || true);
+  const [soundEffects, setSoundEffects] = useState(authState.user?.settings?.sounds || true);
+  const [hapticFeedback, setHapticFeedback] = useState(authState.user?.settings?.haptics || true);
 
   const avatars = ['🎯', '🎮', '🎬', '🎵', '🌟', '🚀', '🎭', '🎨'];
   const [selectedAvatar, setSelectedAvatar] = useState(authState.user?.avatar || '🎯');

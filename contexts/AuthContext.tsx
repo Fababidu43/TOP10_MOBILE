@@ -121,6 +121,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           totalPoints: 0,
           quizCompleted: 0,
           bestScore: 0,
+          settings: {
+            darkMode: false,
+            notifications: true,
+            sounds: true,
+            haptics: true,
+          },
         };
 
         setState({
