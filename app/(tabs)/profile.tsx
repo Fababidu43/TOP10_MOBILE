@@ -11,11 +11,10 @@ import { router } from 'expo-router';
 import { User, Settings, Bell, Moon, Sun, Share2, Heart, CircleHelp as HelpCircle, LogOut, CreditCard as Edit3, Crown } from 'lucide-react-native';
 import { useAuth } from '@/contexts/AuthContext';
 import * as Haptics from 'expo-haptics';
-import { Platform } from 'react-native';
+import { Platform, Alert, Linking } from 'react-native';
 
 export default function ProfileScreen() {
   const { state: authState, logout, updateProfile } = useAuth();
-  const [darkMode, setDarkMode] = useState(authState.user?.settings?.darkMode || false);
   const [notifications, setNotifications] = useState(authState.user?.settings?.notifications || true);
   const [soundEffects, setSoundEffects] = useState(authState.user?.settings?.sounds || true);
   const [hapticFeedback, setHapticFeedback] = useState(authState.user?.settings?.haptics || true);
@@ -42,9 +41,6 @@ export default function ProfileScreen() {
     updateProfile({ settings: newSettings });
     
     switch (setting) {
-      case 'darkMode':
-        setDarkMode(value);
-        break;
       case 'notifications':
         setNotifications(value);
         break;
@@ -60,6 +56,60 @@ export default function ProfileScreen() {
   const handleLogout = () => {
     logout();
     router.replace('/');
+  };
+
+  const handleShareApp = async () => {
+    try {
+      const message = "🎯 Découvrez Top 10 Quiz ! Devinez les 10 éléments les plus populaires dans différentes catégories. Téléchargez maintenant !";
+      
+      if (Platform.OS === 'web') {
+        // Pour le web, copier dans le presse-papiers
+        await navigator.clipboard.writeText(message);
+        Alert.alert('Succès', 'Le lien a été copié dans votre presse-papiers !');
+      } else {
+        // Pour mobile, utiliser l'API de partage native
+        const { Share } = require('react-native');
+        await Share.share({
+          message,
+          title: 'Top 10 Quiz',
+        });
+      }
+    } catch (error) {
+      Alert.alert('Erreur', 'Impossible de partager l\'application');
+    }
+  };
+
+  const handleRateApp = () => {
+    Alert.alert(
+      'Noter l\'application',
+      'Merci de nous soutenir ! Votre avis nous aide à améliorer l\'application.',
+      [
+        { text: 'Plus tard', style: 'cancel' },
+        { 
+          text: 'Noter maintenant', 
+          onPress: () => {
+            // Simuler l'ouverture du store
+            Alert.alert('Merci !', 'Redirection vers le store...');
+          }
+        }
+      ]
+    );
+  };
+
+  const handleHelp = () => {
+    Alert.alert(
+      'Aide & FAQ',
+      '🎯 Comment jouer ?\nDevinez les 10 éléments d\'un classement !\n\n❓ Règles :\n• 3 tentatives par élément\n• 3 points par bonne réponse\n• Indices disponibles\n\n📧 Support :\nsupport@top10quiz.com',
+      [{ text: 'Compris' }]
+    );
+  };
+
+  const handleTerms = () => {
+    Alert.alert(
+      'Conditions d\'utilisation',
+      '📋 Conditions générales :\n\n• Application gratuite\n• Données personnelles protégées\n• Contenu à des fins de divertissement\n• Mise à jour régulière du contenu\n\n📞 Contact :\nlegal@top10quiz.com',
+      [{ text: 'J\'accepte' }]
+    );
   };
 
   if (!authState.isAuthenticated) {
@@ -131,26 +181,13 @@ export default function ProfileScreen() {
           
           <View style={styles.settingItem}>
             <View style={styles.settingInfo}>
-              {darkMode ? <Moon size={20} color="#64748B" /> : <Sun size={20} color="#64748B" />}
-              <Text style={styles.settingLabel}>Mode sombre</Text>
-            </View>
-            <Switch
-              value={darkMode}
-              onValueChange={(value) => handleSettingChange('darkMode', value)}
-              trackColor={{ false: '#E2E8F0', true: '#2563EB' }}
-              thumbColor={darkMode ? '#FFFFFF' : '#FFFFFF'}
-            />
-          </View>
-
-          <View style={styles.settingItem}>
-            <View style={styles.settingInfo}>
               <Bell size={20} color="#64748B" />
               <Text style={styles.settingLabel}>Notifications</Text>
             </View>
             <Switch
               value={notifications}
               onValueChange={(value) => handleSettingChange('notifications', value)}
-              trackColor={{ false: '#E2E8F0', true: '#2563EB' }}
+              trackColor={{ false: '#E2E8F0', true: '#D97706' }}
               thumbColor={notifications ? '#FFFFFF' : '#FFFFFF'}
             />
           </View>
@@ -163,7 +200,7 @@ export default function ProfileScreen() {
             <Switch
               value={soundEffects}
               onValueChange={(value) => handleSettingChange('sounds', value)}
-              trackColor={{ false: '#E2E8F0', true: '#2563EB' }}
+              trackColor={{ false: '#E2E8F0', true: '#D97706' }}
               thumbColor={soundEffects ? '#FFFFFF' : '#FFFFFF'}
             />
           </View>
@@ -176,7 +213,7 @@ export default function ProfileScreen() {
             <Switch
               value={hapticFeedback}
               onValueChange={(value) => handleSettingChange('haptics', value)}
-              trackColor={{ false: '#E2E8F0', true: '#2563EB' }}
+              trackColor={{ false: '#E2E8F0', true: '#D97706' }}
               thumbColor={hapticFeedback ? '#FFFFFF' : '#FFFFFF'}
             />
           </View>
@@ -185,32 +222,32 @@ export default function ProfileScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Social</Text>
           
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity style={styles.menuItem} onPress={handleShareApp}>
             <Share2 size={20} color="#64748B" />
             <Text style={styles.menuLabel}>Partager l'app</Text>
-            <Text style={styles.menuArrow} onPress={() => console.log('Partager l\'app')}>→</Text>
+            <Text style={styles.menuArrow}>→</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity style={styles.menuItem} onPress={handleRateApp}>
             <Heart size={20} color="#64748B" />
             <Text style={styles.menuLabel}>Noter l'app</Text>
-            <Text style={styles.menuArrow} onPress={() => console.log('Noter l\'app')}>→</Text>
+            <Text style={styles.menuArrow}>→</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Support</Text>
           
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity style={styles.menuItem} onPress={handleHelp}>
             <HelpCircle size={20} color="#64748B" />
             <Text style={styles.menuLabel}>Aide & FAQ</Text>
-            <Text style={styles.menuArrow} onPress={() => console.log('Aide & FAQ')}>→</Text>
+            <Text style={styles.menuArrow}>→</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity style={styles.menuItem} onPress={handleTerms}>
             <Settings size={20} color="#64748B" />
             <Text style={styles.menuLabel}>Conditions d'utilisation</Text>
-            <Text style={styles.menuArrow} onPress={() => console.log('Conditions')}>→</Text>
+            <Text style={styles.menuArrow}>→</Text>
           </TouchableOpacity>
         </View>
 

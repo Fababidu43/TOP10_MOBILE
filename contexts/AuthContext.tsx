@@ -47,11 +47,10 @@ const mockUser: User = {
   username: 'QuizMaster_Pro',
   avatar: '🎯',
   level: 8,
-  totalPoints: 127,
-  quizCompleted: 8,
-  bestScore: 27,
+  totalPoints: 0,
+  quizCompleted: 0,
+  bestScore: 0,
   settings: {
-    darkMode: false,
     notifications: true,
     sounds: true,
     haptics: true,
@@ -122,7 +121,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           quizCompleted: 0,
           bestScore: 0,
           settings: {
-            darkMode: false,
             notifications: true,
             sounds: true,
             haptics: true,

@@ -190,15 +190,15 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#FEF7ED',
   },
   header: {
     paddingTop: 60,
     paddingHorizontal: 20,
     paddingBottom: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#FDBA74',
     borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
+    borderBottomColor: '#FB923C',
   },
   title: {
     fontSize: 32,
@@ -215,12 +215,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   explanationSection: {
-    backgroundColor: '#EFF6FF',
+    backgroundColor: '#FEF3C7',
     margin: 20,
     borderRadius: 16,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#BFDBFE',
+    borderColor: '#FDE68A',
   },
   explanationHeader: {
     flexDirection: 'row',

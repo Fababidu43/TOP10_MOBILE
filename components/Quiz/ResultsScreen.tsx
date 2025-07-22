@@ -191,13 +191,8 @@ export default function ResultsScreen() {
           )}
 
           <View style={styles.navigationButtons}>
-            <TouchableOpacity style={styles.replayButton} onPress={handleReplay}>
-              <RotateCcw size={20} color="#2563EB" />
-              <Text style={styles.replayButtonText}>Rejouer</Text>
-            </TouchableOpacity>
-
             <TouchableOpacity style={styles.playButton} onPress={handleBackToPlay}>
-              <Text style={styles.playButtonText}>Retour à Jouer</Text>
+              <Text style={styles.playButtonText}>Autre quiz</Text>
             </TouchableOpacity>
           </View>
 
