@@ -138,7 +138,27 @@ export default function QuizScreen() {
   };
 
   const handleSkip = () => {
-    endGame();
+    Alert.alert(
+      'Terminer la partie',
+      'Que souhaitez-vous faire ?',
+      [
+        {
+          text: 'Voir les résultats',
+          onPress: () => endGame(),
+        },
+        {
+          text: 'Reprendre plus tard',
+          onPress: () => {
+            abandonGame();
+            router.replace('/(tabs)/');
+          },
+        },
+        {
+          text: 'Annuler',
+          style: 'cancel',
+        },
+      ]
+    );
   };
 
   if (!category) {

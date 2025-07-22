@@ -12,8 +12,10 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Trophy, Share2, RotateCcw, Chrome as Home, CircleCheck as CheckCircle, Circle as XCircle } from 'lucide-react-native';
 import { QUIZ_CATEGORIES } from '@/utils/constants';
 import { generateShareMessage } from '@/utils/helpers';
+import { useQuiz } from '@/contexts/QuizContext';
 
 export default function ResultsScreen() {
+  const { resetQuiz } = useQuiz();
   const { 
     categoryId, 
     score, 
@@ -36,6 +38,16 @@ export default function ResultsScreen() {
   const handleShare = async () => {
     if (!category) return;
     
+    // Ne permettre le partage que si score parfait (30/30)
+    if (finalScore < maxScore) {
+      Alert.alert(
+        'Partage non disponible',
+        'Vous pouvez partager votre score uniquement si vous obtenez un score parfait (10/10) !',
+        [{ text: 'OK' }]
+      );
+      return;
+    }
+    
     const message = generateShareMessage(finalScore, category.title, totalItemsCount);
     
     try {
@@ -53,12 +65,13 @@ export default function ResultsScreen() {
   };
 
   const handleReplay = () => {
-    if (categoryId) {
-      router.replace(`/quiz?category=${categoryId}`);
-    }
+    // Supprimer le bouton rejouer car si on termine, on ne veut pas rejouer immédiatement
+    handleBackToPlay();
   };
 
   const handleBackToPlay = () => {
+    // Réinitialiser le quiz avant de retourner à la sélection
+    resetQuiz();
     router.replace('/(tabs)/play');
   };
 
@@ -167,16 +180,14 @@ export default function ResultsScreen() {
         </View>
 
         <View style={styles.actionsSection}>
-          <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
-            <Share2 size={20} color="#FFFFFF" />
-            <Text style={styles.shareButtonText}>Partager mon score</Text>
-          </TouchableOpacity>
+          {finalScore === maxScore && (
+            <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
+              <Share2 size={20} color="#FFFFFF" />
+              <Text style={styles.shareButtonText}>Partager mon score parfait !</Text>
+            </TouchableOpacity>
+          )}
 
           <View style={styles.navigationButtons}>
-            <TouchableOpacity style={styles.replayButton} onPress={handleReplay}>
-              <RotateCcw size={20} color="#2563EB" />
-              <Text style={styles.replayButtonText}>Rejouer</Text>
-            </TouchableOpacity>
 
             <TouchableOpacity style={styles.playButton} onPress={handleBackToPlay}>
               <Text style={styles.playButtonText}>Autre quiz</Text>

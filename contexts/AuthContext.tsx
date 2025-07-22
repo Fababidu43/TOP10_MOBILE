@@ -146,7 +146,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
-    setState(initialState);
+    setState({
+      user: null,
+      isLoading: false,
+      isAuthenticated: false,
+    });
   };
 
   const updateProfile = (updates: Partial<User>) => {

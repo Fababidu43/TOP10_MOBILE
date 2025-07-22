@@ -188,13 +188,13 @@ export default function ProfileScreen() {
           <TouchableOpacity style={styles.menuItem}>
             <Share2 size={20} color="#64748B" />
             <Text style={styles.menuLabel}>Partager l'app</Text>
-            <Text style={styles.menuArrow}>→</Text>
+            <Text style={styles.menuArrow} onPress={() => console.log('Partager l\'app')}>→</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem}>
             <Heart size={20} color="#64748B" />
             <Text style={styles.menuLabel}>Noter l'app</Text>
-            <Text style={styles.menuArrow}>→</Text>
+            <Text style={styles.menuArrow} onPress={() => console.log('Noter l\'app')}>→</Text>
           </TouchableOpacity>
         </View>
 
@@ -204,13 +204,13 @@ export default function ProfileScreen() {
           <TouchableOpacity style={styles.menuItem}>
             <HelpCircle size={20} color="#64748B" />
             <Text style={styles.menuLabel}>Aide & FAQ</Text>
-            <Text style={styles.menuArrow}>→</Text>
+            <Text style={styles.menuArrow} onPress={() => console.log('Aide & FAQ')}>→</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem}>
             <Settings size={20} color="#64748B" />
             <Text style={styles.menuLabel}>Conditions d'utilisation</Text>
-            <Text style={styles.menuArrow}>→</Text>
+            <Text style={styles.menuArrow} onPress={() => console.log('Conditions')}>→</Text>
           </TouchableOpacity>
         </View>
 

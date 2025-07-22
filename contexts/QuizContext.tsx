@@ -115,16 +115,14 @@ export function QuizProvider({ children }: { children: ReactNode }) {
       item => item.name.toLowerCase().trim() === trimmedAnswer
     );
 
-    const newAttempts = state.attempts + 1;
 
     if (foundItem) {
       // Bonne réponse
       const remainingQuestions = state.questions.filter(q => q.id !== foundItem.id);
       const newFoundItems = [...state.foundItems, foundItem];
       
-      // Points dégressifs basés sur le nombre de tentatives pour cet item
-      const itemAttempts = Math.min(3, newAttempts - state.attempts + 1);
-      const points = Math.max(0, 4 - itemAttempts);
+      // Points fixes : 3 points par bonne réponse
+      const points = 3;
       
       const newScore = state.score + points;
       const isGameComplete = remainingQuestions.length === 0;
@@ -137,7 +135,7 @@ export function QuizProvider({ children }: { children: ReactNode }) {
         questions: remainingQuestions,
         foundItems: newFoundItems,
         score: newScore,
-        attempts: newAttempts,
+        attempts: prev.attempts + 1,
         gameOver: isGameComplete,
         currentExplanation: explanation || null,
       }));
@@ -147,8 +145,7 @@ export function QuizProvider({ children }: { children: ReactNode }) {
       // Mauvaise réponse
       setState(prev => ({
         ...prev,
-        attempts: newAttempts,
-        gameOver: newAttempts >= prev.maxAttempts,
+        attempts: prev.attempts + 1,
       }));
 
       return { isCorrect: false, points: 0 };
@@ -216,8 +213,6 @@ export function QuizProvider({ children }: { children: ReactNode }) {
     setState(prev => ({
       ...prev,
       savedGames: [...prev.savedGames, savedGame],
-      isGameAbandoned: true,
-      gameOver: true,
     }));
   };
   
