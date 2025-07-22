@@ -16,6 +16,7 @@ import { useQuiz } from '@/contexts/QuizContext';
 
 export default function ResultsScreen() {
   const { resetQuiz } = useQuiz();
+  const { state: authState, updateScore } = useAuth();
   const { 
     categoryId, 
     score, 
